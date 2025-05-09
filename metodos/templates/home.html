@@ -1,0 +1,17 @@
+<!-- templates/home.html -->
+{% extends 'base.html' %}
+
+{% block title %}Inicio{% endblock %}
+
+{% block content %}
+<div class="card shadow p-4">
+  <h1 class="text-center mb-4">Proyecto Final - Análisis Numérico</h1>
+  <p class="text-center">Selecciona un capítulo:</p>
+  <div class="d-grid gap-3 col-6 mx-auto">
+    <a href="{% url 'capitulo1' %}" class="btn btn-primary">Capítulo 1: Ecuaciones No Lineales</a>
+    <a href="{% url 'capitulo2' %}" class="btn btn-success">Capítulo 2: Sistemas de Ecuaciones</a>
+    <a href="{% url 'capitulo3' %}" class="btn btn-warning">Capítulo 3: Interpolación</a>
+    <a href="{% url 'capitulo4' %}" class="btn btn-danger">Capítulo 4: Integración</a>
+  </div>
+</div>
+{% endblock %}
