@@ -12,177 +12,201 @@
 
 {% block content %}
   <section class="mb-5">
-    <div class="">
-      <div class="row align-items-center g-0 fondo-metodos">
-        <div class="margin-30 w-100 fondo-blanco-transparente">
-          <div class="text-center text-lg-start pt-6 mt-5">
-            <h1 class="text-black display-4 fw-bold pe-lg-8">Resuelve problemas con precisión con el método numérico que prefieras</h1>
-            <p class="text-black-50 mb-4 lead">Descubre la eficiencia de los métodos numéricos para encontrar soluciones rapidamente, además compara resultados entre diferentes métodos.</p>
+    <div class="row align-items-center g-0">
+      <div class="row justify-content-center fondo-metodos">
+        <div class="col-lg-6 col-md-8 col-sm-10" style="margin-bottom: 7vh;">
+          <div class=" margin-30 text-lg-center pt-6 mt-5">
+            <h1 class="text-white display-4 fw-bold pe-lg-8">Resuelve problemas con precisión con el método numérico que prefieras</h1>
+            <p class="text-white-50 mb-4 lead">Descubre la eficiencia de los métodos numéricos para encontrar soluciones rapidamente, además compara resultados entre diferentes métodos.</p>
             <a href="#senl-section" class="btn btn-light mb-2 mr-2">Ecuaciones no lineales</a>
             <a href="#systems-section" class="btn btn-light mb-2 mr-2">Sistemas de ecuaciones</a>
             <a href="#interpolation-section" class="btn btn-light mb-2 mr-2">Interpolación</a>
             <a href="#integration-section" class="btn btn-light mb-2 mr-2">Integración</a>
+            
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <section id="senl-section">
-    <h2 class="font-weight-bold">Soluciones númericas a ecuaciones no lineales (SNENL)</h2>
+
+  <!-- Ecuaciones no lineales -->
+  <section id="senl-section" style="margin-bottom: 20px;">
+    <h2 class="font-weight-bold">Soluciones númericas a ecuaciones no lineales</h2>
     <p class="text-secondary">Descubre métodos numéricos que permiten encontrar aproximaciones para las raíces de ecuaciones no lineales</p>
     <div class="cards-container center-cards">
-      <div class="row">
-        <div class="col">
-          <a class="card no-border" href="{% url 'numerical_method:bisection' %}">
-            <img src="{% static 'img/home/bisection.webp' %}" class="card-img-top" alt="Bisección" />
+      <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
+        <div class="col mb-4">
+          <a class="card metodo-card" href="{% url 'numerical_method:bisection' %}">
+            <img src="{% static 'img/home/bisection.png' %}" class="card-img-top metodo-img" alt="Bisección" />
             <div class="card-body">
               <p class="card-text text-center">Método de bisección</p>
             </div>
           </a>
         </div>
-        <div class="col">
-          <a class="card no-border" href="{% url 'numerical_method:regula_falsi' %}">
-            <img src="{% static 'img/home/regula-falsi.webp' %}" class="card-img-top" alt="Regla Falsa" />
+        <div class="col mb-4">
+          <a class="card metodo-card" href="{% url 'numerical_method:regula_falsi' %}">
+            <img src="{% static 'img/home/reglafalsa.png' %}" class="card-img-top metodo-img" alt="Regla Falsa" />
             <div class="card-body">
               <p class="card-text text-center">Método de regla falsa</p>
             </div>
           </a>
         </div>
-        <div class="col">
-          <a class="card no-border" href="{% url 'numerical_method:fixed_point' %}">
-            <img src="{% static 'img/home/fixed-point.webp' %}" class="card-img-top" alt="Punto fijo" />
+        <div class="col mb-4">
+          <a class="card metodo-card" href="{% url 'numerical_method:fixed_point' %}">
+            <img src="{% static 'img/home/puntofijo.png' %}" class="card-img-top metodo-img" alt="Punto fijo" />
             <div class="card-body">
               <p class="card-text text-center">Método de punto fijo</p>
             </div>
           </a>
         </div>
-        <div class="col">
-          <a class="card no-border" href="{% url 'numerical_method:newton_raphson' %}">
-            <img src="{% static 'img/home/newton-raphson.webp' %}" class="card-img-top" alt="Newton-Raphson" />
+        <div class="col mb-4">
+          <a class="card metodo-card" href="{% url 'numerical_method:newton_raphson' %}">
+            <img src="{% static 'img/home/newton-raphson.png' %}" class="card-img-top metodo-img" alt="Newton-Raphson" />
             <div class="card-body">
               <p class="card-text text-center">Método de Newton-Raphson</p>
             </div>
           </a>
         </div>
-        <div class="col">
-          <a class="card no-border" href="{% url 'numerical_method:secant' %}">
-            <img src="{% static 'img/home/secant.webp' %}" class="card-img-top" alt="Secante" />
+        <div class="col mb-4">
+          <a class="card metodo-card" href="{% url 'numerical_method:secant' %}">
+            <img src="{% static 'img/home/secant.png' %}" class="card-img-top metodo-img" alt="Secante" />
             <div class="card-body">
               <p class="card-text text-center">Método de la secante</p>
             </div>
           </a>
         </div>
-        <div class="col">
-          <a class="card no-border" href="{% url 'numerical_method:multiple_roots_1' %}">
-            <img src="{% static 'img/home/multiple-root-1.webp' %}" class="card-img-top" alt="Multiple root #1" />
+        <div class="col mb-4">
+          <a class="card metodo-card" href="{% url 'numerical_method:multiple_roots_1' %}">
+            <img src="{% static 'img/home/raices1.png' %}" class="card-img-top metodo-img" alt="Multiple root #1" />
             <div class="card-body">
               <p class="card-text text-center">Método de raíces múltiples #1</p>
             </div>
           </a>
         </div>
-        <div class="col">
-          <a class="card no-border" href="{% url 'numerical_method:multiple_roots_2' %}">
-            <img src="{% static 'img/home/multiple-root-2.webp' %}" class="card-img-top" alt="Multiple root #2" />
+        <div class="col mb-4">
+          <a class="card metodo-card" href="{% url 'numerical_method:multiple_roots_2' %}">
+            <img src="{% static 'img/home/raices2.png' %}" class="card-img-top metodo-img" alt="Multiple root #2" />
             <div class="card-body">
               <p class="card-text text-center">Método de raíces múltiples #2</p>
             </div>
           </a>
         </div>
-        <div class="col">
-          <div class="card no-border"></div>
-        </div>
-        <div class="col"></div>
-        <div class="col"></div>
       </div>
     </div>
   </section>
 
-  <section id="systems-section">
-    <h2 class="font-weight-bold">Soluciones numéricas a sistemas de ecuaciones (SNSE)</h2>
+
+  <!-- Sistemas de ecuaciones -->
+  <section id="systems-section" style="margin-bottom: 20px;">
+    <h2 class="font-weight-bold">Soluciones numéricas a sistemas de ecuaciones</h2>
     <p class="text-secondary">Explora métodos numéricos que permiten resolver sistemas de ecuaciones lineales</p>
     <div class="cards-container center-cards">
-      <div class="row">
-        <div class="col">
-          <a class="card no-border" href="{% url 'numerical_method:jacobi' %}">
-            <img src="{% static 'img/home/jacobi.webp' %}" class="card-img-top" alt="Método de Jacobi" />
+      <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
+        <div class="col mb-4">
+          <a class="card metodo-card" href="{% url 'numerical_method:jacobi' %}">
+            <img src="{% static 'img/home/jacobi.webp' %}" class="card-img-top metodo-img" alt="Método de Jacobi" />
             <div class="card-body">
               <p class="card-text text-center">Método de Jacobi</p>
             </div>
           </a>
         </div>
-        <div class="col">
-          <a class="card no-border" href="{% url 'numerical_method:gauss_seidel' %}">
-            <img src="{% static 'img/home/gauss-seidel.webp' %}" class="card-img-top" alt="Gauss-Seidel" />
+        <div class="col mb-4">
+          <a class="card metodo-card" href="{% url 'numerical_method:gauss_seidel' %}">
+            <img src="{% static 'img/home/gauss-seidel.webp' %}" class="card-img-top metodo-img" alt="Gauss-Seidel" />
             <div class="card-body">
               <p class="card-text text-center">Método de Gauss-Seidel</p>
             </div>
           </a>
         </div>
-        <div class="col">
-          <a class="card no-border" href="{% url 'numerical_method:sor' %}">
-            <img src="{% static 'img/home/SOR.webp' %}" class="card-img-top" alt="Sobre-relajación sucesiva (SOR)" />
+        <div class="col mb-4">
+          <a class="card metodo-card" href="{% url 'numerical_method:sor' %}">
+            <img src="{% static 'img/home/SOR.webp' %}" class="card-img-top metodo-img" alt="Sobre-relajación sucesiva (SOR)" />
             <div class="card-body">
               <p class="card-text text-center">Sobre-relajación sucesiva (SOR)</p>
             </div>
           </a>
         </div>
-        <div class="col">
-          <div class="card no-border"></div>
-        </div>
-        <div class="col"></div>
       </div>
     </div>
   </section>
 
-  <section id="interpolation-section">
+
+  <!-- Interpolación -->
+  <section id="interpolation-section" style="margin-bottom: 20px;">
     <h2 class="font-weight-bold">Interpolación (IN)</h2>
     <p class="text-secondary">Usa métodos para generar interpolaciones</p>
     <div class="cards-container center-cards">
-      <div class="row">
-        <div class="col">
-          <a class="card no-border" href="{% url 'numerical_method:vandermonde' %}">
-            <img src="{% static 'img/home/vandermonde.webp' %}" class="card-img-top" alt="Vandermonde" />
+      <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
+        <div class="col mb-4">
+          <a class="card metodo-card" href="{% url 'numerical_method:vandermonde' %}">
+            <img src="{% static 'img/home/vandermonde.webp' %}" class="card-img-top metodo-img" alt="Vandermonde" />
             <div class="card-body">
               <p class="card-text text-center">Método de Vandermonde</p>
             </div>
           </a>
         </div>
-        <div class="col">
-          <a class="card no-border" href="{% url 'numerical_method:newton-interpol' %}">
-            <img src="{% static 'img/home/newton-int.webp' %}" class="card-img-top" alt="Vandermonde" />
+        <div class="col mb-4">
+          <a class="card metodo-card" href="{% url 'numerical_method:newton-interpol' %}">
+            <img src="{% static 'img/home/newton-int.webp' %}" class="card-img-top metodo-img" alt="Vandermonde" />
             <div class="card-body">
               <p class="card-text text-center">Método de Newton</p>
             </div>
           </a>
         </div>
-        <div class="col">
-          <a class="card no-border" href="{% url 'numerical_method:lagrange' %}">
-            <img src="{% static 'img/home/lagrange.webp' %}" class="card-img-top" alt="Lagrange" />
+        <div class="col mb-4">
+          <a class="card metodo-card" href="{% url 'numerical_method:lagrange' %}">
+            <img src="{% static 'img/home/lagrange.webp' %}" class="card-img-top metodo-img" alt="Lagrange" />
             <div class="card-body">
               <p class="card-text text-center">Método de lagrange</p>
             </div>
           </a>
         </div>
-        <div class="col">
-          <a class="card no-border" href="{% url 'numerical_method:spline_linear' %}">
-            <img src="{% static 'img/home/spline.webp' %}" class="card-img-top" alt="Spline Lineal" />
+        <div class="col mb-4">
+          <a class="card metodo-card" href="{% url 'numerical_method:spline_linear' %}">
+            <img src="{% static 'img/home/spline.webp' %}" class="card-img-top metodo-img" alt="Spline Lineal" />
             <div class="card-body">
               <p class="card-text text-center">Método de Spline Lineal</p>
             </div>
           </a>
         </div>
-        <div class="col">
-          <a class="card no-border" href="{% url 'numerical_method:spline_cubic' %}">
-            <img src="{% static 'img/home/spline.webp' %}" class="card-img-top" alt="Spline Cubico" />
+        <div class="col mb-4">
+          <a class="card metodo-card" href="{% url 'numerical_method:spline_cubic' %}">
+            <img src="{% static 'img/home/spline.webp' %}" class="card-img-top metodo-img" alt="Spline Cubico" />
             <div class="card-body">
               <p class="card-text text-center">Método de Spline Cubico</p>
             </div>
           </a>
         </div>
-        <div class="col">
-          <div class="card no-border"></div>
-        <div class="col"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Integración -->
+  <section id="integration-section" style="margin-bottom: 20px;">
+    <h2 class="font-weight-bold">Integración</h2>
+    <p class="text-secondary">Usa métodos para calcular integrales</p>
+    <div class="cards-container center-cards">
+      <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
+        <div class="col mb-4">
+          <a class="card metodo-card" href="{% url 'numerical_method:trapezoidal' %}">
+            <img src="{% static 'img/home/trapezoidal.png' %}" class="card-img-top metodo-img" alt="Trapecio" />
+            <div class="card-body">
+              <p class="card-text text-center">Método del trapecio</p>
+            </div>
+          </a>
+        </div>
+        <div class="col mb-4">
+          <a class="card metodo-card" href="{% url 'numerical_method:simpson' %}">
+            <img src="{% static 'img/home/simpson.png' %}" class="card-img-top metodo-img" alt="Simpson" />
+            <div class="card-body">
+              <p class="card-text text-center">Método de Simpson</p>
+            </div>
+          </a>
+        </div>
+
+
+        
       </div>
     </div>
   </section>
