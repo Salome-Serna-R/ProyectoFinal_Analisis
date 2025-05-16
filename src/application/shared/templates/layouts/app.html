@@ -72,6 +72,19 @@
                 <a class="dropdown-item" href="{% url 'numerical_method:lagrange' %}">Lagrange</a>
               </div>
             </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownSNSE" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Integración
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdownSNSE">
+                <p class="text-center mx-1">
+                  <b>Integración</b>
+                </p>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="{% url 'numerical_method:trapezoidal' %}">Trapecio</a>
+                <a class="dropdown-item" href="{% url 'numerical_method:simpson' %}">Simpson</a>
+              </div>
+            </li>
           </ul>
         </div>
       </nav>

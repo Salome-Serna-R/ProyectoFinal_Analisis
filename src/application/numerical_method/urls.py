@@ -15,6 +15,8 @@ from .views.spline_linear_view import SplineLinearView
 from .views.spline_cubic_view import SplineCubicView
 from .views.lagrange_view import LagrangeView
 from .views.newton_interpol_view import NewtonInterpolView
+from .views.simpson_view import SimpsonView
+from .views.trapezoidal_view import TrapezoidalView
 
 app_name = "numerical_method"
 urlpatterns = [
@@ -97,5 +99,15 @@ urlpatterns = [
         "newton-interpol/",
         NewtonInterpolView.as_view(),
         name="newton-interpol",
+    ),
+    path(
+        "simpson/",
+        SimpsonView.as_view(),
+        name="simpson",
+    ),
+    path(
+        "trapezoidal/",
+        TrapezoidalView.as_view(),
+        name="trapezoidal",
     ),
 ]

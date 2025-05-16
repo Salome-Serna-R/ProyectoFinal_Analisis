@@ -1,3 +1,16 @@
+.fondo-metodos {
+  background-image: url('/static/img/home/fondo_home.png'); /* o usa {% static ... %} si lo haces inline */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.fondo-blanco-transparente {
+  background-color: rgba(255, 255, 255, 0.85);
+}
+
+
+
 .no-border {
     border: none;
     width: 18rem;

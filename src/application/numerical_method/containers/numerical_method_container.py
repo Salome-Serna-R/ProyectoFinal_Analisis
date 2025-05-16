@@ -62,3 +62,7 @@ class NumericalMethodContainer(containers.DeclarativeContainer):
     spline_cubic_service = providers.Factory(SplineCubicService)
     lagrange_service = providers.Factory(LagrangeService)
     newton_interpol_service = providers.Factory(NewtonInterpolService)
+
+    #OJOOOOOOOOOOOO CORREGIR
+    simpson_service = providers.Factory(SplineCubicService) # Placeholder for Simpson service 
+    trapezoidal_service = providers.Factory(SplineCubicService) # Placeholder for trapezoidal service
