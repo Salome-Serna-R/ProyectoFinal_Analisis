@@ -22,12 +22,12 @@
   <body>
     <header>
       <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="{% url 'home:index' %}"><img src="{% static 'img/logo.png' %}" width="150" class="d-inline-block align-top" alt="" /></a>
+        <a class="navbar-brand" href="{% url 'home:index' %}"><img src="{% static 'img/logo.png' %}" width="100" class="d-inline-block align-top" alt="" /></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav mr-auto">
             <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">SNENL</a>
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Ecuaciones no lineales</a>
               <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                 <p class="text-center mx-1">
                   <b>Soluciónes númericas a ecuaciones no lineales</b>
@@ -44,7 +44,7 @@
             </li>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownSNSE" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                SNSE
+                Sistemas de ecuaciones
               </a>
               <div class="dropdown-menu" aria-labelledby="navbarDropdownSNSE">
                 <p class="text-center mx-1">
@@ -58,7 +58,7 @@
             </li>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownSNSE" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                IN
+                Interpolación
               </a>
               <div class="dropdown-menu" aria-labelledby="navbarDropdownSNSE">
                 <p class="text-center mx-1">
@@ -83,13 +83,27 @@
       {% endblock %}
     </main>
 
-    <footer class="bg-body-tertiary text-center text-md-start bg-light mt-5 p-5">
-      <div class="text-center p-2">
-        <img src="{% static 'img/logo.png' %}" width="200" class="d-inline-block align-top" alt="" />
-        <br />
-        <p class="mt-2">© 2024 Kristian Restrepo Osorio, David Lopera, Santiago Palacio Garcia, Jerónimo Cardona Osorio. Todos los derechos reservados.</p>
+    <footer class="bg-body-tertiary text-muted bg-light mt-5 p-4">
+      <div class="d-flex justify-content-between align-items-center flex-wrap">
+        
+        <div class="text-start small">
+          <p class="mb-0">
+            © 2025 Proyecto Final Análisis<br>
+            Universidad EAFIT<br>
+            Ingeniería de Sistemas<br>
+            Desarrollado por: <br>
+            Salomé Serna Restrepo, Jhon Fredy Alzate Duque, Juan David Velazques Restrepo, Esteban Salazar Orozco
+          </p>
+        </div>
+
+        <div class="d-flex align-items-center gap-3 mt-3 mt-md-0">
+          <img src="{% static 'img/logo.png' %}" width="100" class="img-fluid" alt="Logo 1" />
+          <img src="{% static 'img/logo_eafit.png' %}" width="100" class="img-fluid" alt="Logo 2" />
+        </div>
+        
       </div>
     </footer>
+
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js"></script>
