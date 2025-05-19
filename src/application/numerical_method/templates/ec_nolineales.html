@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block title %}
-  Método de bisección
+  Comparación de métodos para ecuaciones no lineales
 {% endblock %}
 
 {% block content %}
@@ -30,15 +30,19 @@
                         <input type="text" class="form-control" id="function_g" name="function_g" placeholder="Ingresar función derivada" required />
                     </div>
                     <div class="form-group">
-                        <label for="x0">Ingrese punto inicial:</label>
+                        <label for="x0">Ingrese punto inicial (x0):</label>
                         <input type="number" class="form-control" id="x0" name="x0" placeholder="Ingresar punto inicial del intervalo" step="any" required />
                     </div>
                     <div class="form-group">
-                        <label for="interval_a">Ingrese punto inicial de intervalo:</label>
+                        <label for="x1">Ingrese segundo punto inicial (x1):</label>
+                        <input type="number" class="form-control" id="x1" name="x1" placeholder="Ingresar segundo punto inicial" step="any" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="interval_a">Ingrese punto inicial de intervalo (a):</label>
                         <input type="number" class="form-control" id="interval_a" name="interval_a" placeholder="Ingresar punto inicial del intervalo" step="any" required />
                     </div>
                     <div class="form-group">
-                        <label for="interval_b">Ingrese punto final de intervalo:</label>
+                        <label for="interval_b">Ingrese punto final de intervalo (b):</label>
                         <input type="number" class="form-control" id="interval_b" name="interval_b" placeholder="Ingresar punto final del intervalo" step="any" required />
                     </div>
                     <div class="form-group">
@@ -65,15 +69,43 @@
             </div>
         </div>
         <!-- ACÁ HAY QUE PONER LA LÓGICA PARA EJECUTAR TODOS LOS MÉTODOS Y REALIZAR EL INFORME COMPARATIVO-->
-       <!-- {% if template_data %}
-            {% include 'components/alert_message.html' with message=template_data.message_method title='Información proporcionada por el método' %}
-            {% if template_data.is_successful %}
-                {% include 'components/result_tables/result_table_SNENL.html' with table=template_data.table %}
-                <div class="container d-flex justify-content-center">
-                    <a href="{% url 'numerical_method:ec_nolineales' %}" class="btn btn-light mb-2 mr-2">Comparar Métodos</a>
+        {% if resumen %}
+        <div class="mt-5">
+            <h3 class="text-center">Resumen comparativo de métodos</h3>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Método</th>
+                        <th>Iteraciones</th>
+                        <th>Error</th>
+                        <th>Raíz</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for fila in resumen %}
+                        <tr>
+                            <td>{{ fila.Metodo }}</td>
+                            <td>{{ fila.Iteraciones }}</td>
+                            <td>{{ fila.Error }}</td>
+                            <td>{{ fila.Raiz }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="text-center">
+                <a href="{{ }}" class="btn btn-success" target="_blank">Descargar informe PDF</a>
+            </div>
+
+            {% if graph_url %}
+                <div class="text-center mt-4">
+                    <h5>Gráfica de la función</h5>
+                    <img src="{{ graph_url }}" alt="Gráfica de función" class="img-fluid">
                 </div>
             {% endif %}
-        {% endif %}-->
+        </div>
+    {% endif %}
+
     </div>
     
 {% endblock %}
