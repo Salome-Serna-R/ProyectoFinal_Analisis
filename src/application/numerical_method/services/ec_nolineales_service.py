@@ -9,22 +9,58 @@ class ECNoLinealesService:
         # Importa aquí para evitar el ciclo
         from src.application.numerical_method.containers.numerical_method_container import NumericalMethodContainer
         self.methods = [
-            NumericalMethodContainer.bisection_service.bisection_service(),
-            NumericalMethodContainer.regula_falsi_service.regula_falsi_service(),
-            NumericalMethodContainer.fixed_point_service.fixed_point_service(),
-            NumericalMethodContainer.newton_service.newtons_service(),
-            NumericalMethodContainer.secant_service.secant_service(),
-            NumericalMethodContainer.multiple_roots_1_service.multiple_roots_1_service(),
-            NumericalMethodContainer.multiple_roots_2_service.multiple_roots_2_service(),
+            NumericalMethodContainer.bisection_service(),
+            NumericalMethodContainer.regula_falsi_service(),
+            NumericalMethodContainer.fixed_point_service(),
+            NumericalMethodContainer.newton_service(),
+            NumericalMethodContainer.secant_service(),
+            NumericalMethodContainer.multiple_roots_1_service(),
+            NumericalMethodContainer.multiple_roots_2_service(),
         ]
 
-    # Validación de datos de entrada
+    data = {
+        "f": None,
+        "g": None,
+        "x0": None,
+        "interval_a": None,
+        "interval_b": None,
+        "precision": None,
+        "tol": None,
+        "max_iter": None,
+    }
+
+    # Validar datos de entrada
     def validate_input(self, data):
-        for method in self.methods:
-            validation_result = method.validate_input(data)
-            if validation_result is not None:
-                return validation_result
+        self.data = data
+        # Validar que todos los campos estén presentes
+        required_fields = ["f", "g", "x0", "interval_a", "interval_b", "precision", "tol", "max_iter"]
+        for field in required_fields:
+            if field not in data:
+                return f"Falta el campo: {field}"
+
+        # Validar tipos de datos
+        try:
+            data["x0"] = float(data["x0"])
+            data["interval_a"] = float(data["interval_a"])
+            data["interval_b"] = float(data["interval_b"])
+            data["precision"] = int(data["precision"])
+            data["tol"] = float(data["tol"])
+            data["max_iter"] = int(data["max_iter"])
+        except ValueError as e:
+            return f"Error de tipo de dato: {e}"
+
         return None
+    
+    # Mapa de dependencias para los métodos
+    method_params = {
+        "BisectionService": ["interval_a", "interval_b", "tolerance", "max_iterations", "function_f", "precision"],
+        "NewtonRaphsonService": ["x0", "tolerance", "max_iterations", "function_f", "df", "precision"],
+        "SecantService": ["x0", "x1", "tolerance", "max_iterations", "function_f", "precision"],
+        "FixedPointService": ["x0", "tolerance", "max_iterations", "function_f", "g", "precision"],
+        "MultipleRoots1Service": ["x0", "tolerance", "max_iterations", "function_f", "precision"],
+        "MultipleRoots2Service": ["x0", "tolerance", "max_iterations", "function_f", "precision"],
+    }
+
 
     # Ejecutar todos los métodos y retornar los resultados completos
     def compare_methods(self, data):

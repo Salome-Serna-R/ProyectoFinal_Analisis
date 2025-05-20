@@ -116,4 +116,9 @@ urlpatterns = [
         NonLinearView.as_view(),
         name="ec_nolineales",
     ),
+    path('descargar-informe/', 
+        NonLinearView.descargar_pdf, 
+        name='descargar_informe'
+    ),
+
 ]
