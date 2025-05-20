@@ -19,14 +19,14 @@ class ECNoLinealesService:
         ]
 
     data = {
-        "f": None,
-        "g": None,
+        "function_f": None,
+        "function_g": None,
         "x0": None,
         "interval_a": None,
         "interval_b": None,
         "precision": None,
-        "tol": None,
-        "max_iter": None,
+        "tolerance": None,
+        "max_iterations": None,
     }
 
     # Validar datos de entrada
@@ -51,22 +51,26 @@ class ECNoLinealesService:
 
         return None
     
-    # Mapa de dependencias para los métodos
-    method_params = {
+
+    
+
+
+    # Ejecutar todos los métodos y retornar los resultados completos
+    def compare_methods(self, data):
+        method_params = {
         "BisectionService": ["interval_a", "interval_b", "tolerance", "max_iterations", "function_f", "precision"],
         "NewtonRaphsonService": ["x0", "tolerance", "max_iterations", "function_f", "df", "precision"],
         "SecantService": ["x0", "x1", "tolerance", "max_iterations", "function_f", "precision"],
         "FixedPointService": ["x0", "tolerance", "max_iterations", "function_f", "g", "precision"],
         "MultipleRoots1Service": ["x0", "tolerance", "max_iterations", "function_f", "precision"],
         "MultipleRoots2Service": ["x0", "tolerance", "max_iterations", "function_f", "precision"],
-    }
-
-
-    # Ejecutar todos los métodos y retornar los resultados completos
-    def compare_methods(self, data):
+        }
         results = {}
         for method in self.methods:
-            results[method.name] = method.solve(data)
+            class_name = method.__class__.__name__
+            params = {k: data.get(k, None) for k in method_params[class_name]}
+
+            method.solve(**params)
         return results
 
     # Resumir resultados para tabla: Método, Iteraciones, Error, Raíz
