@@ -11,13 +11,16 @@ class NewtonService(IterativeMethod):
 
     def solve(
         self,
-        x0: float,
-        tolerance: float,
-        max_iterations: int,
-        precision: int,
-        function_f: str,
         **kwargs,
     ) -> dict:
+
+        # Extraemos los parámetros necesarios de kwargs
+        x0 = kwargs.get("x0")
+        tolerance = kwargs.get("tolerance")
+        max_iterations = kwargs.get("max_iterations")
+        function_f = kwargs.get("function_f")
+        precision = kwargs.get("precision")
+
         # Inicializa la variable simbólica para usar en SymPy
         x = sp.symbols("x")
         # Convierte la función ingresada de `math` a `SymPy`

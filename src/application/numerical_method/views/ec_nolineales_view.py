@@ -1,32 +1,31 @@
 from django.views.generic import TemplateView
 from src.application.numerical_method.services.ec_nolineales_service import ECNoLinealesService
-from src.application.numerical_method.interfaces.interval_method import (
-    IntervalMethod,
-)
-from src.application.numerical_method.containers.numerical_method_container import (
-    NumericalMethodContainer,
-)
-from dependency_injector.wiring import inject, Provide
 from src.application.shared.utils.plot_function import plot_function
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpResponse
 from fpdf import FPDF
 import os
 
-#Este es el controlador de la vista de ecuaciones no lineales donde pedimos TODOS los datos necesarios para ejecutar todos los metodos
-# y graficar la funcion además de guardar los resultados en uun pdf para descargarlo como el informe comparativo de los metodos
 class NonLinearView(TemplateView):
     template_name = "ec_nolineales.html"
 
-
-    def descargar_pdf(request):
+    def descargar_pdf(self, resumen):
         pdf = FPDF()
         pdf.add_page()
         pdf.set_font("Arial", size=12)
-        pdf.cell(200, 10, txt="Este es el informe guardado con FPDF.", ln=1, align='C')
+        pdf.cell(200, 10, txt="Informe comparativo de métodos:", ln=1, align='L')
 
-        path = os.path.join('static', 'img', 'numerical_method', 'informe_comparativo.pdf')
+        for metodo, resultado in resumen.items():
+            pdf.ln(10)
+            pdf.set_font("Arial", "B", 12)
+            pdf.cell(0, 10, txt=metodo, ln=1)
+
+            pdf.set_font("Arial", size=10)
+            for key, value in resultado.items():
+                pdf.cell(0, 10, txt=f"{key}: {value}", ln=1)
+
+        path = os.path.join('static', 'pdf', 'numerical_method', 'informe_comparativo.pdf')
+        os.makedirs(os.path.dirname(path), exist_ok=True)
         pdf.output(path)
-
 
     def post(self, request, *args, **kwargs):
         # Obtener datos del formulario
@@ -48,16 +47,19 @@ class NonLinearView(TemplateView):
         if error:
             return self.render_to_response({"error": error})
 
-        # Ejecutar métodos y generar PDF
-        resumen = service.generate_comparison_report(data)
+        # Ejecutar métodos y generar resumen
+        resumen = service.compare_methods(data)
 
-        # Ruta de la gráfica (si usas graficación)
-        graph_path = plot_function(data["f"], data["x0"], data["x1"])
+        # Generar PDF
+        self.descargar_pdf(resumen)
 
-        # Renderizar la respuesta
+        # (Opcional) Ruta de la gráfica si usas graficación
+        # graph_path = plot_function(data["function_f"], data["interval_a"], data["interval_b"])
+        graph_path = None  # puedes quitar esto si no necesitas la gráfica aún
+
+        # Renderizar respuesta
         return self.render_to_response({
             "resumen": resumen,
             "graph_path": graph_path,
             "data": data,
         })
-

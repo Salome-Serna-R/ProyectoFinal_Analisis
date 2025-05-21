@@ -9,14 +9,18 @@ from src.application.shared.utils.plot_function import plot_function
 class MultipleRoots1Service(IterativeMethod):
     def solve(
         self,
-        x0: float,
-        tolerance: float,
-        max_iterations: int,
-        precision: int,
-        function_f: str,
-        multiplicity: int,
         **kwargs,
     ) -> dict:
+
+        # Extraemos los parámetros necesarios de kwargs
+        x0 = kwargs.get("x0")
+        tolerance = kwargs.get("tolerance")
+        max_iterations = kwargs.get("max_iterations")
+        precision = kwargs.get("precision")
+        function_f = kwargs.get("function_f")
+        multiplicity = kwargs.get("multiplicity")
+
+        
         # Inicializa la variable simbólica para usar en SymPy
         x = sp.symbols("x")
 
