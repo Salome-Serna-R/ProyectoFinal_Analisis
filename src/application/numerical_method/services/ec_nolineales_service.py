@@ -44,20 +44,31 @@ class ECNoLinealesService:
     # Ejecutar todos los métodos y retornar los resultados completos
     def compare_methods(self, data):
         method_params = {
-        "BisectionService": ["interval_a", "interval_b", "tolerance", "max_iterations", "function_f", "precision"],
-        "NewtonRaphsonService": ["x0", "tolerance", "max_iterations", "function_f", "df", "precision"],
-        "SecantService": ["x0", "x1", "tolerance", "max_iterations", "function_f", "precision"],
-        "FixedPointService": ["x0", "tolerance", "max_iterations", "function_f", "g", "precision"],
-        "MultipleRoots1Service": ["x0", "tolerance", "max_iterations", "function_f", "precision"],
-        "MultipleRoots2Service": ["x0", "tolerance", "max_iterations", "function_f", "precision"],
+            "BisectionService": ["interval_a", "interval_b", "tolerance", "max_iterations", "function_f", "precision"],
+            "NewtonRaphsonService": ["x0", "tolerance", "max_iterations", "function_f", "df", "precision"],
+            "SecantService": ["interval_a", "interval_b", "tolerance", "max_iterations", "function_f", "precision"],
+            "FixedPointService": ["x0", "tolerance", "max_iterations", "function_f", "g", "precision"],
+            "MultipleRoots1Service": ["x0", "tolerance", "max_iterations", "function_f", "precision"],
+            "MultipleRoots2Service": ["x0", "tolerance", "max_iterations", "function_f", "precision"],
         }
+
         results = {}
+
         for method in self.methods:
             class_name = method.__class__.__name__
-            params = {k: data.get(k, None) for k in method_params[class_name]}
+            params = {}
+
+            for key in method_params[class_name]:
+                value = data.get(key, None)
+                # Asegurar que funciones estén en formato string
+                if key in ["function_f", "function_g"] and value is not None and not isinstance(value, str):
+                    value = str(value)
+                params[key] = value
 
             results[class_name] = method.solve(**params)
+
         return results
+
 
     # Resumir resultados para tabla: Método, Iteraciones, Error, Raíz
     def summarize_results(self, raw_results):
