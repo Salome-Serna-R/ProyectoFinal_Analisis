@@ -45,9 +45,9 @@ class ECNoLinealesService:
     def compare_methods(self, data):
         method_params = {
             "BisectionService": ["interval_a", "interval_b", "tolerance", "max_iterations", "function_f", "precision"],
-            "NewtonRaphsonService": ["x0", "tolerance", "max_iterations", "function_f", "df", "precision"],
+            "NewtonRaphsonService": ["x0", "tolerance", "max_iterations", "function_f", "precision"],
             "SecantService": ["interval_a", "interval_b", "tolerance", "max_iterations", "function_f", "precision"],
-            "FixedPointService": ["x0", "tolerance", "max_iterations", "function_f", "g", "precision"],
+            "FixedPointService": ["x0", "tolerance", "max_iterations", "function_f", "function_g", "precision"],
             "MultipleRoots1Service": ["x0", "tolerance", "max_iterations", "function_f", "precision"],
             "MultipleRoots2Service": ["x0", "tolerance", "max_iterations", "function_f", "precision"],
         }
