@@ -14,15 +14,14 @@ El método de punto fijo es una técnica para resolver ecuaciones no lineales. C
 class FixedPointService(IterativeMethod):
     def solve(
         self,
-        **kwargs,
+        function_f: str,
+        function_g: str,
+        x0: float,
+        tolerance: float,
+        max_iterations: int,
+        precision: bool = False,
     ) -> dict:
-        # Extraemos los parámetros necesarios de kwargs
-        x0 = kwargs.get("x0")
-        tolerance = kwargs.get("tolerance")
-        max_iterations = kwargs.get("max_iterations")
-        function_f = kwargs.get("function_f")
-        precision = kwargs.get("precision")
-        function_g = kwargs.get("function_g")
+        
 
         # Definición de tabla que contiene todo el proceso
         table = {}

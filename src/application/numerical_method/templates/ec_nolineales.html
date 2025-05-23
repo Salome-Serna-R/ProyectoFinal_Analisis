@@ -23,16 +23,20 @@
                     {% csrf_token %}
                     <div class="form-group">
                         <label for="function_f">Función a evaluar:</label>
-                        <input type="text" class="form-control" id="function_f" name="function_f" placeholder="Ingresar función" required />
+                        <input type="text" class="form-control" id="function_f" name="function_f" placeholder="Ej: x**3 - x - 2" required />
                     </div>
+                    <!--
                     <div class="form-group">
                         <label for="function_g">Fución equivalente g(x):</label>
                         <input type="text" class="form-control" id="function_g" name="function_g" placeholder="Ingresar función derivada" required />
                     </div>
+
                     <div class="form-group">
                         <label for="x0">Ingrese punto inicial (x0):</label>
                         <input type="number" class="form-control" id="x0" name="x0" placeholder="Ingresar punto inicial del intervalo" step="any" required />
                     </div>
+                -->
+
                     <div class="form-group">
                         <label for="interval_a">Ingrese punto inicial de intervalo (a):</label>
                         <input type="number" class="form-control" id="interval_a" name="interval_a" placeholder="Ingresar punto inicial del intervalo" step="any" required />
@@ -60,25 +64,33 @@
                             <label class="form-check-label" for="absolute_error">Error absoluto</label>
                         </div>
                     </div>   
-                    <button type="submit" class="btn btn-dark">Realizar comparación</button>
+                    <button type="submit" class="btn btn-primary">Realizar comparación</button>
                 </form>
             </div>
         </div>
         <!-- ACÁ HAY QUE PONER LA LÓGICA PARA EJECUTAR TODOS LOS MÉTODOS Y REALIZAR EL INFORME COMPARATIVO-->
-        {% if resumen %}
-        <div class="mt-5">
-            <a href="{% static 'pdf/informe_comparativo.pdf' %}" target="_blank" class="btn btn-success">
-                Descargar informe comparativo PDF
-            </a>
-
-            {% if graph_url %}
-                <div class="text-center mt-4">
-                    <h5>Gráfica de la función</h5>
-                    <img src="{% static 'img/numerical_method/function_plot.svg' % }" alt="Gráfica de función" class="img-fluid">
+        {% if results %}
+            <h2 class="mt-4 text-center">Resultados comparativos</h2>
+            <div class="row">
+                {% for r in results %}
+                <div class="col-md-6 col-lg-3 mt-3">
+                    <div class="card">
+                    <div class="card-header text-center font-weight-bold">{{ r.method }}</div>
+                    <div class="card-body">
+                        {% if r.error_msg %}
+                        <div class="alert alert-danger">{{ r.error_msg }}</div>
+                        {% else %}
+                        <p><strong>Raíz:</strong> {{ r.root }}</p>
+                        <p><strong>Iteraciones:</strong> {{ r.iterations }}</p>
+                        <p><strong>Error:</strong> {{ r.error }}</p>
+                        {% endif %}
+                    </div>
+                    </div>
                 </div>
-            {% endif %}
-        </div>
-    {% endif %}
+                {% endfor %}
+            </div>
+        {% endif %}
+
 
     </div>
     

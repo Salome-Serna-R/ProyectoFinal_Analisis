@@ -11,16 +11,16 @@ El método de la secante es una técnica numérica para encontrar raíces de ecu
 class SecantService(IntervalMethod):
     def solve(
         self,
+        function_f: str,
+        interval_a: float,
+        interval_b: float,
+        tolerance: float,
+        max_iterations: int,
+        precision: bool = False,
         **kwargs,
     ) -> dict:
         
-        # Extraemos los parámetros necesarios de kwargs
-        interval_a = kwargs.get("x0")
-        interval_b = kwargs.get("interval_b")
-        tolerance = kwargs.get("tolerance")
-        max_iterations = kwargs.get("max_iterations")
-        function_f = kwargs.get("function_f")
-        precision = kwargs.get("precision")
+       
 
         # Definición de tabla que contiene todo el proceso
         table = {}
@@ -30,9 +30,9 @@ class SecantService(IntervalMethod):
         current_error = math.inf
         # Evaluamos la función en los puntos iniciales interval_a y interval_b
         x = interval_a
-        f_a = eval(function_f)
+        f_a = eval(str(function_f), {"x": x, "math": math})
         x = interval_b
-        f_b = eval(function_f)
+        f_b = eval(str(function_f), {"x": x, "math": math})
 
         # Bucle del método de la secante
         while current_iteration <= max_iterations:

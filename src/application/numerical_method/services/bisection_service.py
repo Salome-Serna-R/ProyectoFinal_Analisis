@@ -13,16 +13,16 @@ El método de bisección es una técnica numérica para encontrar raíces de ecu
 
 class BisectionService(IntervalMethod):
     def solve(
-        self, **kwargs
+        self,
+        function_f: str,
+        interval_a: float,
+        interval_b: float,
+        tolerance: float,
+        max_iterations: int,
+        precision: bool = False,
     ) -> dict:
 
-        # Extraemos los parámetros necesarios de kwargs
-        interval_a = kwargs.get("interval_a")
-        interval_b = kwargs.get("interval_b")
-        tolerance = kwargs.get("tolerance")
-        max_iterations = kwargs.get("max_iterations")
-        function_f = kwargs.get("function_f")
-        precision = kwargs.get("precision")
+        
 
         # Definición del intervalo inicial.
         interval = [interval_a, interval_b]
@@ -38,9 +38,15 @@ class BisectionService(IntervalMethod):
 
         # Evaluamos la función en los extremos del intervalo para verificar si alguno de ellos es una raíz exacta.
         x = interval[0]
-        fa = eval(function_f)
+        try:
+            fa = lambda x: eval(function_f, {"x": x, "math": math})
+        except Exception as e:
+            return {"error": f"Error en la función: {str(e)}"}
         x = interval[1]
-        fb = eval(function_f)
+        try:
+            fb = lambda x: eval(function_f, {"x": x, "math": math})
+        except Exception as e:
+            return {"error": f"Error en la función: {str(e)}"}
 
         # Si el valor en el extremo inferior es cero, ese punto es una raíz.
         if fa == 0:

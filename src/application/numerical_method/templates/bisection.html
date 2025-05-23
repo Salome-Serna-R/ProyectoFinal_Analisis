@@ -54,14 +54,18 @@
         </form>
       </div>
       {% if template_data %}
-        {% include 'components/alert_message.html' with message=template_data.message_method title='Información proporcionada por el método' %}
-        {% if template_data.is_successful %}
-          {% include 'components/result_tables/result_table_SNENL.html' with table=template_data.table %}
-          <div class="container d-flex justify-content-center">
-            <img src="{% static 'img/numerical_method/function_plot.svg' %}" alt="Gráfica de la función" class="img-fluid" width="800px" />
+        <div class="card mt-4">
+          <div class="card-body">
+            {% include 'components/alert_message.html' with message=template_data.message_method title='Información proporcionada por el método' %}
+            {% if template_data.is_successful %}
+              {% include 'components/result_tables/result_table_SNENL.html' with table=template_data.table %}
+              <div class="text-center mt-3">
+                <img src="{% static 'img/numerical_method/function_plot.svg' %}" alt="Gráfica de la función" class="img-fluid" width="800px" />
+              </div>
+              {% include 'components/download_svg_button.html' %}
+            {% endif %}
           </div>
-          {% include 'components/download_svg_button.html' %}
-        {% endif %}
+        </div>
       {% endif %}
     </div>
   </div>

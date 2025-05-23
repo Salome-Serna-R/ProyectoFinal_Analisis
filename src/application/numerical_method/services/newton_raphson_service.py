@@ -11,15 +11,29 @@ class NewtonService(IterativeMethod):
 
     def solve(
         self,
+        function_f: str,
+        x0: float,
+        tolerance: float,
+        max_iterations: int,
+        precision: bool = False,
         **kwargs,
     ) -> dict:
+        # Convertir x0 y tolerance a float por si vienen como string
+        try:
+            if isinstance(x0, str):
+                x0 = float(x0.replace(",", "."))
+            if isinstance(tolerance, str):
+                tolerance = float(tolerance.replace(",", "."))
+        except ValueError:
+            return self._prepare_response(
+                message="x0 y tolerancia deben ser números válidos.",
+                table={},
+                is_successful=False,
+                have_solution=False,
+                points=[(0, 0)],
+                function=function_f,
+            )
 
-        # Extraemos los parámetros necesarios de kwargs
-        x0 = kwargs.get("x0")
-        tolerance = kwargs.get("tolerance")
-        max_iterations = kwargs.get("max_iterations")
-        function_f = kwargs.get("function_f")
-        precision = kwargs.get("precision")
 
         # Inicializa la variable simbólica para usar en SymPy
         x = sp.symbols("x")
@@ -32,10 +46,11 @@ class NewtonService(IterativeMethod):
         f = sp.lambdify(x, f_expr, modules=["math"])
         f_prime = sp.lambdify(x, f_prime_expr, modules=["math"])
 
+        
         # Definición de tabla que contiene todo el proceso
         table = {}
         # Inicializa el valor inicial y error actual
-        x0_current = x0
+        x0_current = float(x0)
         current_error = math.inf
         current_iteration = 1
         points = [(x0_current, 0)]  # Para graficar
@@ -133,17 +148,34 @@ class NewtonService(IterativeMethod):
 
     def validate_input(
         self,
-        x0: float,
-        tolerance: float,
+        x0: float | str,
+        tolerance: float | str,
         max_iterations: int,
         function_f: str,
         **kwargs,
     ) -> str | bool:
-        # Validaciones
+
+        # Asegura que x0 y tolerance sean flotantes válidos
+        try:
+            if isinstance(x0, str):
+                x0 = float(x0.replace(",", "."))
+            else:
+                x0 = float(x0)
+
+            if isinstance(tolerance, str):
+                tolerance = float(tolerance.replace(",", "."))
+            else:
+                tolerance = float(tolerance)
+
+        except ValueError:
+            plot_function(function_f, False, [(0, 0)])
+            return "x0 y tolerancia deben ser números reales válidos."
+
+        # Validaciones siguientes
         x = sp.symbols("x")
         sympy_function_f = convert_math_to_sympy(function_f)
 
-        if not isinstance(tolerance, (int, float)) or tolerance <= 0:
+        if tolerance <= 0:
             plot_function(function_f, False, [(x0, 0)])
             return "La tolerancia debe ser un número positivo"
 

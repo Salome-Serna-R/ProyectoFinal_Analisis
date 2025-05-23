@@ -1,65 +1,135 @@
-from django.views.generic import TemplateView
-from src.application.numerical_method.services.ec_nolineales_service import ECNoLinealesService
-from src.application.shared.utils.plot_function import plot_function
-from django.http import HttpResponse
-from fpdf import FPDF
-import os
+from django.shortcuts import render
 
-class NonLinearView(TemplateView):
-    template_name = "ec_nolineales.html"
 
-    def descargar_pdf(self, resumen):
-        pdf = FPDF()
-        pdf.add_page()
-        pdf.set_font("Arial", size=12)
-        pdf.cell(200, 10, txt="Informe comparativo de métodos:", ln=1, align='L')
+def auto_compare_view(request):
+    if request.method == 'POST':
+        function_str = request.POST['function_f']
+        a = float(request.POST['interval_a'])
+        b = float(request.POST['interval_b'])
+        tol = float(request.POST['tolerance'])
+        max_iter = int(request.POST['max_iterations'])
+        precision = int(request.POST['precision'])
 
-        for metodo, resultado in resumen.items():
-            pdf.ln(10)
-            pdf.set_font("Arial", "B", 12)
-            pdf.cell(0, 10, txt=metodo, ln=1)
+        results = []
+        # Importar los métodos de solución
+        from src.application.numerical_method.services.bisection_service import BisectionService as bisection_method
+        from src.application.numerical_method.services.regula_falsi_service import RegulaFalsiService as false_position_method
+        from src.application.numerical_method.services.fixed_point_service import FixedPointService as fixed_point_method
+        from src.application.numerical_method.services.newton_raphson_service import NewtonService as newton_method
+        from src.application.numerical_method.services.secant_service import SecantService as secant_method
+        from src.application.numerical_method.services.multiple_roots_1_service import MultipleRoots1Service as multiple_roots_1_method
+        from src.application.numerical_method.services.multiple_roots_2_service import MultipleRoots2Service as multiple_roots_2_method
+        from src.application.numerical_method.services.regula_falsi_service import RegulaFalsiService as regula_falsi_method
 
-            pdf.set_font("Arial", size=10)
-            for key, value in resultado.items():
-                pdf.cell(0, 10, txt=f"{key}: {value}", ln=1)
+        #Cambiar la funcion a un string
+        function_str = str(function_str)
+        # Método de bisección
+        try:
+            result = bisection_method.solve(function_str, a, b, tol, max_iter, precision)
+            # Si la tabla tiene datos, obtiene el error de la última iteración.
+            if result['table']:
+                last_iteration = max(result['table'].keys())
+                last_error = result['table'][last_iteration].get('error', None)
+            else:
+                last_error = None
+            results.append({
+                'method': 'Bisección',
+                'root': result['root'],
+                'iterations': len(result['table']),  # o lo que represente tus iteraciones
+                'error': last_error,
+            })
 
-        path = os.path.join('static', 'pdf', 'numerical_method', 'informe_comparativo.pdf')
-        os.makedirs(os.path.dirname(path), exist_ok=True)
-        pdf.output(path)
+        except Exception as e:
+            results.append({'method': 'Bisección', 'error_msg': str(e)})
 
-    def post(self, request, *args, **kwargs):
-        # Obtener datos del formulario
-        data = {
-            "function_f": request.POST.get("funcion_f"),
-            "function_g": request.POST.get("funcion_g"),
-            "x0": float(request.POST.get("x0")),
-            "interval_a": float(request.POST.get("interval_a")),
-            "interval_b": float(request.POST.get("interval_b")),
-            "precision": int(request.POST.get("precision")),
-            "tolerance": float(request.POST.get("tolerance")),
-            "max_iterations": int(request.POST.get("max_iterations")),
-        }
+        # Falsa posición
+        try:
+            result = false_position_method.solve(function_str, a, b, tol, max_iter, precision)
+            last_error = None
+            if result['table']:
+                last_iteration = max(result['table'].keys())
+                last_error = result['table'][last_iteration].get('error', None)
+            results.append({
+                'method': 'Falsa Posición',
+                'root': result['root'],
+                'iterations': len(result['table']),
+                'error': last_error,
+            })
+        except Exception as e:
+            results.append({'method': 'Falsa Posición', 'error_msg': str(e)})
 
-        service = ECNoLinealesService()
+        # Newton-Raphson
+        try:
+            result = newton_method.solve(function_str, a, tol, max_iter, precision)
+            results.append({
+                'method': 'Newton-Raphson',
+                'root': result['root'],
+                'iterations': len(result['table']),
+                'error': last_error,
+            })
+        except Exception as e:
+            results.append({'method': 'Newton-Raphson', 'error_msg': str(e)})
 
-        # Validar datos
-        error = service.validate_input(data)
-        if error:
-            return self.render_to_response({"error": error})
+        # Secante 
+        try:
+            result = secant_method.solve(function_str, a, b, tol, max_iter, precision)
+            results.append({
+                'method': 'Secante',
+                'root': result['root'],
+                'iterations': len(result['table']),
+                'error': last_error,
+            })
+        except Exception as e:
+            results.append({'method': 'Secante', 'error_msg': str(e)})
 
-        # Ejecutar métodos y generar resumen
-        resumen = service.compare_methods(data)
+        # Punto fijo
+        """
+        try:
 
-        # Generar PDF
-        self.descargar_pdf(resumen)
+            root, iterations, error = fixed_point_method(function_str, a, tol, max_iter)
+            results.append({
+                'method': 'Punto Fijo',
+                'root': root,
+                'iterations': iterations,
+                'error': error,
+            })
+        except Exception as e:
+            results.append({'method': 'Punto Fijo', 'error_msg': str(e)})
 
-        # (Opcional) Ruta de la gráfica si usas graficación
-        # graph_path = plot_function(data["function_f"], data["interval_a"], data["interval_b"])
-        graph_path = None  # puedes quitar esto si no necesitas la gráfica aún
+        # Raíces múltiples 1
+        try:
 
-        # Renderizar respuesta
-        return self.render_to_response({
-            "resumen": resumen,
-            "graph_path": graph_path,
-            "data": data,
-        })
+            root, iterations, error = multiple_roots_1_method(function_str, a, tol, max_iter)
+            results.append({
+                'method': 'Raíces Múltiples 1',
+                'root': root,
+                'iterations': iterations,
+                'error': error,
+            })
+        except Exception as e:
+            results.append({'method': 'Raíces Múltiples 1', 'error_msg': str(e)})
+
+        # Raíces múltiples 2
+        try:
+
+            root, iterations, error = multiple_roots_2_method(function_str, a, tol, max_iter)
+            results.append({
+                'method': 'Raíces Múltiples 2',
+                'root': root,
+                'iterations': iterations,
+                'error': error,
+            })
+        except Exception as e:
+            results.append({'method': 'Raíces Múltiples 2', 'error_msg': str(e)})
+    """
+
+        #Resultados imprimir
+        for result in results:
+            if 'error_msg' in result:
+                print(f"{result['method']}: {result['error_msg']}")
+            else:
+                print(f"{result['method']}: Raíz = {result['root']}, Iteraciones = {result['iterations']}, Error = {result['error']}")
+
+        return render(request, 'ec_nolineales.html', {'results': results})
+
+    return render(request, 'ec_nolineales.html')

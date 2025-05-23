@@ -17,7 +17,7 @@ from .views.lagrange_view import LagrangeView
 from .views.newton_interpol_view import NewtonInterpolView
 from .views.simpson_view import SimpsonView
 from .views.trapezoidal_view import TrapezoidalView
-from .views.ec_nolineales_view import NonLinearView
+from .views.ec_nolineales_view import auto_compare_view
 
 app_name = "numerical_method"
 urlpatterns = [
@@ -113,12 +113,8 @@ urlpatterns = [
     ),
     path(
         "ec_nolineales/",
-        NonLinearView.as_view(),
+        auto_compare_view,
         name="ec_nolineales",
-    ),
-    path('descargar-informe/', 
-        NonLinearView.descargar_pdf, 
-        name='descargar_informe'
     ),
 
 ]
