@@ -1,6 +1,6 @@
-# XNum
+# Soluciones numéricas 
 
-XNum is a web application designed to solve numerical methods. It is a simple application with a great user interface and is responsive for use on any device.
+Soluciones  numéricas is a web application designed to solve numerical methods. It is a simple application with a great user interface and is responsive for use on any device.
 
 The methods that our application solves are:
 - Bisection Method
@@ -27,7 +27,7 @@ The methods that our application solves are:
 
 1. **Clone the repository**
    ```bash
-   git clone git@github.com:kristianrpo/XNum.git
+   git clone git@github.com: ... CORREGIR
    cd XNum
    ```
 
