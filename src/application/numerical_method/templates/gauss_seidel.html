@@ -62,7 +62,7 @@
             </form>
         </div>
         {% if template_data %}
-            {% include 'components/alert_message.html' with message=template_data.message_method title='Información proporcionada por el método' %}
+            {% include 'components/alert_message.html' with message=template_data.message_method title='Resultado:' %}
             {% if template_data.is_successful %}
             {% include 'components/result_tables/result_table_SNSE.html' %}
             {% if template_data.spectral_radius < 1 %}

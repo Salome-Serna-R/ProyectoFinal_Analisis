@@ -44,9 +44,6 @@ from src.application.numerical_method.services.lagrange_service import (
 from src.application.numerical_method.services.newton_interpol_service import (
   NewtonInterpolService,
 )
-from src.application.numerical_method.services.ec_nolineales_service import (
-    ECNoLinealesService,
-)
 
 
 class NumericalMethodContainer(containers.DeclarativeContainer):

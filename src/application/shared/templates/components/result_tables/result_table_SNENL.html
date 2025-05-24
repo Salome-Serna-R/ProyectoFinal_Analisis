@@ -1,7 +1,7 @@
 {% if table %}
   <div class="table-responsive">
     <table class="table">
-      <thead class="thead-dark">
+      <thead class="bg-primary text-white">
         <tr>
           <th scope="col">i</th>
           <th scope="col">Xn</th>
@@ -11,7 +11,7 @@
       </thead>
       <tbody>
         {% for key, row in table.items %}
-          <tr class="{% if forloop.last %}table-warning{% endif %}">
+          <tr class="{% if forloop.last %}table-success{% endif %}">
             <th scope="row">{{ row.iteration }}</th>
             <td>{{ row.approximate_value }}</td>
             <td>{{ row.f_evaluated }}</td>

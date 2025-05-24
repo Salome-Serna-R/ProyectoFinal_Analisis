@@ -47,7 +47,7 @@
         </form>
       </div>
       {% if template_data %}
-        {% include 'components/alert_message.html' with message=template_data.message_method title='Información proporcionada por el método' %}
+        {% include 'components/alert_message.html' with message=template_data.message_method title='Resultado:' %}
         {% if template_data.is_successful %}
           {% include 'components/result_tables/result_table_SNENL.html' with table=template_data.table %}
           <div class="container d-flex justify-content-center">

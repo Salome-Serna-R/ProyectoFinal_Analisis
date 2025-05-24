@@ -40,7 +40,7 @@
         </form>
       </div>
       {% if template_data %}
-        {% include 'components/alert_message.html' with message=template_data.message_method title='Información proporcionada por el método' %}
+        {% include 'components/alert_message.html' with message=template_data.message_method title='Resultado:' %}
         {% if template_data.is_successful %}
           <div class="overflow-auto mt-4">
             <h2 class="font-weight-bold">Polinomio interpolante</h2>
