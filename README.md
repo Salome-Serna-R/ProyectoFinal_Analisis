@@ -1,35 +1,67 @@
-# Soluciones numéricas 
+# Numerical Solutions
 
-Soluciones  numéricas is a web application designed to solve numerical methods. It is a simple application with a great user interface and is responsive for use on any device.
+**Numerical Solutions** is a web application developed to solve numerical methods interactively. It is divided into chapters based on the topics covered in the course, and features a responsive, user-friendly interface.
 
-The methods that our application solves are:
-- Bisection Method
-- False Position Method
-- Fixed Point Method
-- Newton-Raphson Method
-- Secant Method
-- Multiple Roots Method #1
-- Multiple Roots Method #2
-- Jacobi's Method
-- Gauss-Seidel Method
+---
+
+## Chapter 1: Nonlinear Equation Solvers
+
+Implemented methods:
+
+- Bisection Method  
+- False Position Method  
+- Fixed Point Method  
+- Newton-Raphson Method  
+- Secant Method  
+- Multiple Roots Method (Version 1 and 2)
+
+---
+
+## Chapter 2: Linear System Solvers
+
+Implemented methods:
+
+- Jacobi Method  
+- Gauss-Seidel Method  
 - SOR Method (Successive Over-Relaxation)
-- Vandermonde Method
-- Newton Interpolation Method
-- Lagrange Method
-- Linear and Cubic Spline Methods
+
+---
+
+## Chapter 3: Interpolation Methods
+
+Implemented methods:
+
+- Vandermonde Method  
+- Newton Interpolation Method  
+- Lagrange Method  
+- Linear Spline  
+- Cubic Spline
+
+---
+
+## Group Members
+
+- Salomé Serna  
+- Jhon Fredy Alzate
+- Juan David Velázquez
+- Esteban Salazar  
+
+---
 
 ## Prerequisites
-- Python 3.x installed.
-- `pip` installed.
-- Virtualenv (optional but recommended).
 
-## Steps to Set Up the Project
+- Python 3.x installed  
+- `pip` installed  
+- Virtualenv (optional but recommended)
+
+---
+
+## How to Run the Project
 
 1. **Clone the repository**
    ```bash
-   git clone git@github.com: ... CORREGIR
-   cd XNum
-   ```
+   git clone https://github.com/Salome-Serna-R/ProyectoFinal_Analisis.git
+   cd ProyectoFinal_Analisis
 
 2. **Create a virtual environment (optional but recommended)**
    ```bash
