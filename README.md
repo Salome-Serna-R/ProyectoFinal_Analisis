@@ -61,7 +61,7 @@ Implemented methods:
 1. **Clone the repository**
    ```bash
    git clone https://github.com/Salome-Serna-R/ProyectoFinal_Analisis.git
-   cd ProyectoFinal_Analisis
+
 
 2. **Create a virtual environment (optional but recommended)**
    ```bash
