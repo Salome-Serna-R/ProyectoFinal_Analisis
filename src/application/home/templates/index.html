@@ -14,23 +14,27 @@
   <section class="mb-5">
     <div class="row align-items-center g-0">
       <div class="row justify-content-center fondo-metodos">
-        <div class="col-lg-6 col-md-8 col-sm-10" style="margin-bottom: 7vh;">
-          <div class=" margin-30 text-lg-center pt-6 mt-5">
-            <h1 class="text-white display-4 fw-bold pe-lg-8">Resuelve problemas con precisión con el método numérico que prefieras</h1>
-            <p class="text-white-50 mb-4 lead">Descubre la eficiencia de los métodos numéricos para encontrar soluciones rapidamente, además compara resultados entre diferentes métodos.</p>
+        <div class="col-lg-8 col-md-10 col-sm-12" style="margin-bottom: 7vh;">
+          <div class="margin-30 text-lg-center pt-6 mt-5">
+            <h1 class="text-white display-4 fw-bold pe-lg-8">Capítulos y Métodos Numéricos</h1>
+            <p class="text-white-50 mb-4 lead">
+              Explora la implementación, comparación y análisis de diversos métodos numéricos organizados en capítulos, con interfaces que facilitan la entrada de datos, visualización gráfica y generación automática de informes de resultados para ayudarte a elegir el mejor método según el problema.
+            </p>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-
-  <!-- Ecuaciones no lineales -->
-  <section id="senl-section" style="margin-bottom: 20px;">
-    <h2 class="font-weight-bold">Soluciones númericas a ecuaciones no lineales</h2>
-    <p class="text-secondary">Descubre métodos numéricos que permiten encontrar aproximaciones para las raíces de ecuaciones no lineales</p>
+  <!-- Capítulo 1 -->
+  <section id="chapter1-section" style="margin-bottom: 20px;">
+    <h2 class="font-weight-bold">Capítulo 1: Solución de ecuaciones no lineales</h2>
+    <p class="text-secondary">
+      Se entregan los métodos de bisección, regla falsa, punto fijo, Newton-Raphson, secante y al menos uno de raíces múltiples. La interfaz permite ingresar funciones algebraicas de manera flexible, con ayuda para calcular derivadas y explicaciones claras sobre el ingreso de datos. 
+      La solución se presenta mediante gráficas y tablas de iteraciones. Además, se genera un informe automático de ejecución y comparación de todos los métodos aplicados a un problema específico, identificando el método más eficiente. El usuario puede decidir si desea generar este informe.
+    </p>
     <div class="cards-container center-cards">
-      <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
+      <div class="row row-cols-1 row-cols-md-3 row-cols-lg-6 g-4">
         <div class="col mb-4">
           <a class="card metodo-card" href="{% url 'numerical_method:bisection' %}">
             <img src="{% static 'img/home/bisection.png' %}" class="card-img-top metodo-img" alt="Bisección" />
@@ -73,33 +77,25 @@
         </div>
         <div class="col mb-4">
           <a class="card metodo-card" href="{% url 'numerical_method:multiple_roots_1' %}">
-            <img src="{% static 'img/home/raices1.png' %}" class="card-img-top metodo-img" alt="Multiple root #1" />
+            <img src="{% static 'img/home/raices1.png' %}" class="card-img-top metodo-img" alt="Raíces múltiples" />
             <div class="card-body">
-              <p class="card-text text-center">Método de raíces múltiples #1</p>
-            </div>
-          </a>
-        </div>
-        <div class="col mb-4">
-          <a class="card metodo-card" href="{% url 'numerical_method:multiple_roots_2' %}">
-            <img src="{% static 'img/home/raices2.png' %}" class="card-img-top metodo-img" alt="Multiple root #2" />
-            <div class="card-body">
-              <p class="card-text text-center">Método de raíces múltiples #2</p>
+              <p class="card-text text-center">Método de raíces múltiples</p>
             </div>
           </a>
         </div>
       </div>
     </div>
-    <p class="text-secondary">Además, puedes comparar resultados entre diferentes métodos</p>
-    
   </section>
 
-
-  <!-- Sistemas de ecuaciones -->
-  <section id="systems-section" style="margin-bottom: 20px;">
-    <h2 class="font-weight-bold">Soluciones numéricas a sistemas de ecuaciones</h2>
-    <p class="text-secondary">Explora métodos numéricos que permiten resolver sistemas de ecuaciones lineales</p>
+  <!-- Capítulo 2 -->
+  <section id="chapter2-section" style="margin-bottom: 20px;">
+    <h2 class="font-weight-bold">Capítulo 2: Solución de sistemas de ecuaciones lineales</h2>
+    <p class="text-secondary">
+      Se entregan los métodos de Jacobi, Gauss-Seidel y Sobre-relajación sucesiva (SOR). La interfaz muestra tablas con las soluciones iterativas, calcula y muestra el radio espectral, e indica si cada método converge o no según dicho radio. Se permite ingresar matrices hasta tamaño 7x7 con explicaciones claras para la entrada de datos. 
+      Al igual que en el capítulo 1, se genera un informe automático y comparativo de los métodos aplicado a un problema específico, resaltando el método más efectivo, con opción para que el usuario decida si ejecutar el informe.
+    </p>
     <div class="cards-container center-cards">
-      <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
+      <div class="row row-cols-1 row-cols-md-3 row-cols-lg-3 g-4">
         <div class="col mb-4">
           <a class="card metodo-card" href="{% url 'numerical_method:jacobi' %}">
             <img src="{% static 'img/home/Jacobi.png' %}" class="card-img-top metodo-img" alt="Método de Jacobi" />
@@ -128,13 +124,15 @@
     </div>
   </section>
 
-
-  <!-- Interpolación -->
-  <section id="interpolation-section" style="margin-bottom: 20px;">
-    <h2 class="font-weight-bold">Interpolación (IN)</h2>
-    <p class="text-secondary">Usa métodos para generar interpolaciones</p>
+  <!-- Capítulo 3 -->
+  <section id="chapter3-section" style="margin-bottom: 20px;">
+    <h2 class="font-weight-bold">Capítulo 3: Interpolación polinómica</h2>
+    <p class="text-secondary">
+      Se entregan los métodos de Vandermonde, Newton interpolante, Lagrange, spline lineal y spline cúbico. La interfaz permite ingresar hasta 8 puntos de datos con explicaciones sencillas. 
+      Los resultados se muestran gráficamente junto con el polinomio solución y su tabla de valores. Se genera un informe automático y comparativo que evalúa el rendimiento de cada método ante un problema específico, identificando el más adecuado. El usuario decide si desea ejecutar el informe.
+    </p>
     <div class="cards-container center-cards">
-      <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
+      <div class="row row-cols-1 row-cols-md-3 row-cols-lg-5 g-4">
         <div class="col mb-4">
           <a class="card metodo-card" href="{% url 'numerical_method:vandermonde' %}">
             <img src="{% static 'img/home/vandermonde.jpg' %}" class="card-img-top metodo-img" alt="Vandermonde" />
@@ -145,7 +143,7 @@
         </div>
         <div class="col mb-4">
           <a class="card metodo-card" href="{% url 'numerical_method:newton-interpol' %}">
-            <img src="{% static 'img/home/newton_IN.png' %}" class="card-img-top metodo-img" alt="Vandermonde" />
+            <img src="{% static 'img/home/newton_IN.png' %}" class="card-img-top metodo-img" alt="Newton Interpolante" />
             <div class="card-body">
               <p class="card-text text-center">Método de Newton</p>
             </div>
@@ -155,7 +153,7 @@
           <a class="card metodo-card" href="{% url 'numerical_method:lagrange' %}">
             <img src="{% static 'img/home/lagrange.png' %}" class="card-img-top metodo-img" alt="Lagrange" />
             <div class="card-body">
-              <p class="card-text text-center">Método de lagrange</p>
+              <p class="card-text text-center">Método de Lagrange</p>
             </div>
           </a>
         </div>
@@ -163,15 +161,15 @@
           <a class="card metodo-card" href="{% url 'numerical_method:spline_linear' %}">
             <img src="{% static 'img/home/splinelineal.png' %}" class="card-img-top metodo-img" alt="Spline Lineal" />
             <div class="card-body">
-              <p class="card-text text-center">Método de Spline Lineal</p>
+              <p class="card-text text-center">Spline Lineal</p>
             </div>
           </a>
         </div>
         <div class="col mb-4">
           <a class="card metodo-card" href="{% url 'numerical_method:spline_cubic' %}">
-            <img src="{% static 'img/home/splinecubico.png' %}" class="card-img-top metodo-img" alt="Spline Cubico" />
+            <img src="{% static 'img/home/splinecubico.png' %}" class="card-img-top metodo-img" alt="Spline Cúbico" />
             <div class="card-body">
-              <p class="card-text text-center">Método de Spline Cubico</p>
+              <p class="card-text text-center">Spline Cúbico</p>
             </div>
           </a>
         </div>
@@ -179,33 +177,11 @@
     </div>
   </section>
 
-  <!-- Integración -->
-  <section id="integration-section" style="margin-bottom: 20px;">
-    <h2 class="font-weight-bold">Integración</h2>
-    <p class="text-secondary">Usa métodos para calcular integrales</p>
-    <div class="cards-container center-cards">
-      <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
-        <div class="col mb-4">
-          <a class="card metodo-card" href="{% url 'numerical_method:trapezoidal' %}">
-            <img src="{% static 'img/home/trapezoidal.png' %}" class="card-img-top metodo-img" alt="Trapecio" />
-            <div class="card-body">
-              <p class="card-text text-center">Método del trapecio</p>
-            </div>
-          </a>
-        </div>
-        <div class="col mb-4">
-          <a class="card metodo-card" href="{% url 'numerical_method:simpson' %}">
-            <img src="{% static 'img/home/simpson.png' %}" class="card-img-top metodo-img" alt="Simpson" />
-            <div class="card-body">
-              <p class="card-text text-center">Método de Simpson</p>
-            </div>
-          </a>
-        </div>
-
-
-        
-      </div>
-    </div>
+  <section id="group-info" class="mb-5">
+    <h2 class="font-weight-bold">Información del grupo</h2>
+    <p class="text-secondary">
+      Entrega realizada por: Salomé Serna, Jhon Fredy Alzate, Juan David Velásquez y Esteban Salazar.
+    </p>
   </section>
 
 {% endblock %}

@@ -1,15 +1,19 @@
 .clickable-panel {
-    background-color: #f7f7f7;
+    background-color: var(--dbz-light);
     padding: 15px;
     border-radius: 5px;
     border: 1px solid #ddd;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
     cursor: pointer;
+    position: relative;
+    overflow: hidden;
 }
 
 .clickable-panel:hover {
-    background-color: #e0e0e0;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: var(--dbz-orange);
+    color: white;
+    transform: scale(1.03);
+    box-shadow: 0 0 20px var(--dbz-aura);
 }
 
 .panel {
@@ -18,18 +22,20 @@
 }
 
 .panel:hover {
-    color: #a18262;
+    color: var(--dbz-orange);
 }
 
 code {
-    background-color: #a18262;
+    background-color: var(--dbz-blue);
     color: #fff;
     padding: 2px 6px;
-    border-radius: 4px;
+    border-radius: 6px;
+    font-weight: bold;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
 .inside {
-    background-color: #f7f7f7;
+    background-color: var(--dbz-light);
     padding: 10px;
 }
 

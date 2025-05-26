@@ -1,5 +1,6 @@
 import math
 from src.application.shared.utils.plot_function import plot_function
+from typing import Union
 from src.application.numerical_method.interfaces.interval_method import (
     IntervalMethod,
 )
@@ -12,6 +13,40 @@ El método de regla falsa es una técnica numérica para encontrar raíces de ec
 
 
 class RegulaFalsiService(IntervalMethod):
+    def validate_input(
+        self,
+        function_f: str,
+        interval_a: float,
+        interval_b: float,
+        tolerance: float,
+        max_iterations: int,
+    ) -> Union[str, bool]:
+        # Validar que a < b
+        if interval_a >= interval_b:
+            return "El extremo inferior del intervalo debe ser menor que el extremo superior."
+
+        # Validar tolerancia positiva
+        if tolerance <= 0:
+            return "La tolerancia debe ser un valor positivo."
+
+        # Validar número de iteraciones
+        if max_iterations <= 0:
+            return "El número máximo de iteraciones debe ser un entero positivo."
+
+        # Validar que la función pueda evaluarse en a y b
+        try:
+            f = lambda x: eval(function_f, {"x": x, "math": math})
+            fa = f(interval_a)
+            fb = f(interval_b)
+        except Exception as e:
+            return f"Error al evaluar la función: {e}"
+
+        # Validar que f(a) * f(b) < 0
+        if fa * fb > 0:
+            return "f(a) y f(b) tienen el mismo signo. No se garantiza la existencia de una raíz en el intervalo."
+
+        return True
+    
     def solve(
         self,
         function_f: str,
@@ -166,4 +201,6 @@ class RegulaFalsiService(IntervalMethod):
             "have_solution": False,
             "root": 0.0,
         }
+    
+
 

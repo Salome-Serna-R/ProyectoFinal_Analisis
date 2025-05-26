@@ -4,51 +4,135 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200..900&family=Source+Code+Pro:wght@200..900&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="{% static 'css/layouts/app.css' %}" />
-    {% block extra_css %}
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&family=Source+Code+Pro:wght@400;700&display=swap" rel="stylesheet" />
 
-    {% endblock %}
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/layouts/app.css' %}" />
+
+    <style>
+      body {
+        font-family: 'Outfit', sans-serif;
+        background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+        color: #f5e31a; /* amarillo DBZ */
+        text-transform: uppercase;
+      }
+
+      /* Navbar estilo DBZ */
+      .navbar {
+        background-color: #b71c1c !important; /* rojo fuerte DBZ */
+        box-shadow: 0 0 15px #f5e31a;
+      }
+      .navbar-brand img {
+        filter: drop-shadow(0 0 6px #f5e31a);
+      }
+      .nav-link, .navbar-nav .nav-link {
+        color: #f5e31a !important; /* amarillo */
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-shadow: 1px 1px 2px #000;
+      }
+      .nav-link:hover, .nav-item.dropdown:hover > .nav-link {
+        color: #ffb300 !important; /* amarillo más cálido */
+        text-shadow: 0 0 8px #ffb300;
+      }
+
+      /* Dropdown menú con estilo DBZ */
+      .dropdown-menu {
+        background-color: #111;
+        border: 2px solid #b71c1c;
+        box-shadow: 0 0 15px #b71c1c;
+      }
+      .dropdown-item {
+        color: #f5e31a;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      .dropdown-item:hover {
+        background-color: #f5e31a;
+        color: #b71c1c !important;
+        font-weight: 700;
+        text-shadow: none;
+        box-shadow: 0 0 12px #f5e31a;
+      }
+
+      main {
+        min-height: 75vh;
+      }
+
+      /* Footer DBZ */
+      footer {
+        background-color: #b71c1c;
+        color: #f5e31a;
+        text-align: center;
+        text-transform: uppercase;
+        padding: 1.5rem 1rem;
+        box-shadow: 0 -5px 15px #ffb300;
+      }
+      footer p {
+        margin: 0.3rem 0;
+        letter-spacing: 0.1em;
+        font-weight: 600;
+        text-shadow: 1px 1px 2px #000;
+      }
+      footer img {
+        filter: drop-shadow(0 0 6px #ffb300);
+      }
+    </style>
+
+    {% block extra_css %}{% endblock %}
+
     <title>
-      {% block title %}
-        Análisis numérico
-      {% endblock %}
+      {% block title %}ANÁLISIS NUMÉRICO DBZ{% endblock %}
     </title>
   </head>
 
   <body>
     <header>
-      <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="{% url 'home:index' %}"><img src="{% static 'img/logo.png' %}" width="100" class="d-inline-block align-top" alt="" /></a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+      <nav class="navbar navbar-expand-lg navbar-dark">
+        <a class="navbar-brand" href="{% url 'home:index' %}">
+          <img src="{% static 'img/logo.png' %}" width="100" class="d-inline-block align-top" alt="Logo Proyecto" />
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav mr-auto">
             <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Ecuaciones no lineales</a>
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Capítulo 1
+              </a>
               <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <p class="text-center mx-1">
-                  <b>Soluciónes númericas a ecuaciones no lineales</b>
+                <p class="text-center mx-3 font-weight-bold" style="color:#ffb300;">
+                  Métodos para resolver ecuaciones no lineales
                 </p>
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="{% url 'numerical_method:bisection' %}">Bisección</a>
-                <a class="dropdown-item" href="{% url 'numerical_method:regula_falsi' %}">Regla falsa</a>
-                <a class="dropdown-item" href="{% url 'numerical_method:fixed_point' %}">Punto fijo</a>
+                <a class="dropdown-item" href="{% url 'numerical_method:regula_falsi' %}">Regla Falsa</a>
+                <a class="dropdown-item" href="{% url 'numerical_method:fixed_point' %}">Punto Fijo</a>
                 <a class="dropdown-item" href="{% url 'numerical_method:newton_raphson' %}">Newton-Raphson</a>
                 <a class="dropdown-item" href="{% url 'numerical_method:secant' %}">Secante</a>
-                <a class="dropdown-item" href="{% url 'numerical_method:multiple_roots_1' %}">Raíces múltiples #1</a>
-                <a class="dropdown-item" href="{% url 'numerical_method:multiple_roots_2' %}">Raíces múltiples #2</a>
+                <a class="dropdown-item" href="{% url 'numerical_method:multiple_roots_1' %}">Raíces Múltiples #1</a>
+                <a class="dropdown-item" href="{% url 'numerical_method:multiple_roots_2' %}">Raíces Múltiples #2</a>
               </div>
             </li>
             <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownSNSE" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Sistemas de ecuaciones
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownSNSE" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Capítulo 2
               </a>
               <div class="dropdown-menu" aria-labelledby="navbarDropdownSNSE">
-                <p class="text-center mx-1">
-                  <b>Soluciones numéricas de sistemas de ecuaciones</b>
+                <p class="text-center mx-3 font-weight-bold" style="color:#ffb300;">
+                  Métodos para sistemas de ecuaciones lineales
                 </p>
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="{% url 'numerical_method:jacobi' %}">Jacobi</a>
@@ -57,69 +141,41 @@
               </div>
             </li>
             <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownSNSE" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Interpolación
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownInterpolation" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Capítulo 3
               </a>
-              <div class="dropdown-menu" aria-labelledby="navbarDropdownSNSE">
-                <p class="text-center mx-1">
-                  <b>Interpolación</b>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdownInterpolation">
+                <p class="text-center mx-3 font-weight-bold" style="color:#ffb300;">
+                  Métodos de interpolación
                 </p>
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="{% url 'numerical_method:vandermonde' %}">Vandermonde</a>
                 <a class="dropdown-item" href="{% url 'numerical_method:newton-interpol' %}">Newton</a>
                 <a class="dropdown-item" href="{% url 'numerical_method:spline_linear' %}">Spline Lineal</a>
-                <a class="dropdown-item" href="{% url 'numerical_method:spline_cubic' %}">Spline Cubico</a>
+                <a class="dropdown-item" href="{% url 'numerical_method:spline_cubic' %}">Spline Cúbico</a>
                 <a class="dropdown-item" href="{% url 'numerical_method:lagrange' %}">Lagrange</a>
               </div>
             </li>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownSNSE" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Integración
-              </a>
-              <div class="dropdown-menu" aria-labelledby="navbarDropdownSNSE">
-                <p class="text-center mx-1">
-                  <b>Integración</b>
-                </p>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="{% url 'numerical_method:trapezoidal' %}">Trapecio</a>
-                <a class="dropdown-item" href="{% url 'numerical_method:simpson' %}">Simpson</a>
-              </div>
-            </li>
-          </ul>
         </div>
       </nav>
     </header>
 
     <main class="mt-4 mx-5">
       {% block content %}
-
       {% endblock %}
     </main>
 
-    <footer class="bg-body-tertiary text-muted bg-light mt-5 p-4">
-      <div class="d-flex justify-content-between align-items-center flex-wrap">
-        
-        <div class="text-start small">
-          <p class="mb-0">
-            © 2025 Proyecto Final Análisis<br>
-            Universidad EAFIT<br>
-            Ingeniería de Sistemas<br>
-            Desarrollado por: <br>
-            Salomé Serna Restrepo, Jhon Fredy Alzate Duque, Juan David Velazques Restrepo, Esteban Salazar Orozco
-          </p>
-        </div>
-
-        <div class="d-flex align-items-center gap-3 mt-3 mt-md-0">
-          <img src="{% static 'img/logo.png' %}" width="100" class="img-fluid" alt="Logo 1" />
-          <img src="{% static 'img/logo_eafit.png' %}" width="100" class="img-fluid" alt="Logo 2" />
-        </div>
-        
-      </div>
+    <footer>
+      <p>Proyecto Análisis Numérico DBZ &copy; 2025</p>
+      <img src="{% static 'img/logo.png' %}" alt="Logo Proyecto" width="80" />
     </footer>
 
-
+    <!-- Bootstrap JS, Popper.js, and jQuery -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    {% block extra_js %}{% endblock %}
   </body>
 </html>

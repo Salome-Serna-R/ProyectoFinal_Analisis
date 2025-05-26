@@ -1,5 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+
 * {
     font-family: "Manrope", sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 html {
@@ -7,5 +12,19 @@ html {
 }
 
 :root {
-    accent-color: #62a1a0;
+    --dbz-orange: #f27d0c;
+    --dbz-blue: #1f75fe;
+    --dbz-yellow: #ffe600;
+    --dbz-dark: #222;
+    --dbz-light: #f0f0f0;
+    --dbz-aura: #00ffff;
+    --dbz-accent: #62a1a0;
+    accent-color: var(--dbz-blue);
+}
+
+h1, h2, .titulo-epico {
+    font-family: 'Bebas Neue', sans-serif;
+    color: var(--dbz-orange);
+    text-shadow: 2px 2px 4px black;
+    letter-spacing: 1px;
 }

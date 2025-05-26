@@ -1,8 +1,9 @@
 .fondo-metodos {
-  background-image: url('/static/img/home/fondo_home.png'); /* o usa {% static ... %} si lo haces inline */
+  background-image: url('/static/img/home/goku_fondo_transparente.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  filter: brightness(0.9) contrast(1.1);
 }
 
 .fondo-blanco-transparente {
@@ -11,7 +12,7 @@
 
 .metodo-card {
   height: 100%;
-  border: none;
+  border: 2px solid var(--dbz-blue);
   border-radius: 1rem;
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -27,44 +28,41 @@
   border-radius: 1rem 1rem 0 0;
 }
 
-
 .metodo-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 6px 18px var(--dbz-aura);
+  border-color: var(--dbz-orange);
 }
-
 
 .card-body {
   flex-grow: 1;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 1rem;
 }
 
-
-
 .no-border {
-    border: none;
-    width: 18rem;
+  border: none;
+  width: 18rem;
 }
 
 .card:hover {
-    cursor: pointer;
-    text-decoration-color: #62a1a0;
-
+  cursor: pointer;
+  text-decoration-color: var(--dbz-orange);
 }
 
 .card p {
-    color: black;
+  color: black;
 }
 
 .cards-container {
-    margin-top: 40px;
+  margin-top: 40px;
 }
 
 .center-cards .col {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }

@@ -44,13 +44,15 @@ class SORService(MatrixMethod):
                 x_new[i] = (1 - relaxation_factor) * x[i] + (relaxation_factor / A[i, i]) * (b[i] - sum_others)
 
             # Calcular el error como norma infinito de la diferencia
-            current_error = np.linalg.norm(x_new - x, ord=np.inf)
+            
 
             # Aplicar precisión al vector de soluciones y al error
             if precision_type == 1:  # Decimales correctos
+                current_error = np.linalg.norm(x_new - x, ord=np.inf)
                 x_new = np.round(x_new, int(-np.floor(np.log10(tolerance))))
                 current_error = round(current_error, int(-np.floor(np.log10(tolerance))))
             elif precision_type == 0:  # Cifras significativas
+                current_error = np.linalg.norm((x_new - x)/x_new, ord=np.inf)
                 factor = 10 ** int(np.ceil(np.log10(abs(1 / tolerance))))
                 x_new = np.round(x_new * factor) / factor
                 current_error = round(current_error * factor) / factor
