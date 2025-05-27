@@ -142,14 +142,18 @@ class SORService(MatrixMethod):
         if len(A) != matrix_size or any(len(row) != matrix_size for row in A):
             return f"La matriz A debe ser cuadrada y coincidir con el tamaño seleccionado ({matrix_size}x{matrix_size})."
 
-        # Validar que A es de máximo tamaño 6x6
-        if len(A) > 6:
-            return "La matriz A debe ser de hasta 6x6."
+        # Validar que A es de máximo tamaño 7x7
+        if len(A) > 7:
+            return "La matriz A debe ser de hasta 7x7."
 
         # Validar que b y x0 tengan tamaños compatibles con A
         if len(b) != len(A) or len(x0) != len(A):
             return "El vector b y x0 deben ser compatibles con el tamaño de la matriz A."
 
+        # Verificar que no haya ceros en la diagonal
+        if np.any(np.diag(A) == 0):
+            return ("El método SOR no puede continuar: la matriz A tiene ceros en su diagonal.")
+        
         # Validar el rango del factor de relajación w
         if relaxation_factor <= 0 or relaxation_factor >= 2:
             return "El factor de relajación w debe estar en el rango (0, 2)."

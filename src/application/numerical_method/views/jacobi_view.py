@@ -18,7 +18,7 @@ class JacobiView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # Agregando los tamaños de matriz al contexto
-        context["matrix_sizes"] = [2, 3, 4, 5, 6]
+        context["matrix_sizes"] = [2, 3, 4, 5, 6, 7]
         return context
 
     def post(
