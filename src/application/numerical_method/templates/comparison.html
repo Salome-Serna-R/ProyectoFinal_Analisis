@@ -1,0 +1,368 @@
+{% extends 'layouts/app.html' %}
+{% load static %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/components/input_guidelines_card.css' %}" />
+  <style>
+    .comparison-table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 20px 0;
+    }
+    .comparison-table th,
+    .comparison-table td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: center;
+    }
+    .comparison-table th {
+      background-color: #f8f9fa;
+      font-weight: bold;
+    }
+    .success-row {
+      background-color: #d4edda;
+    }
+    .error-row {
+      background-color: #f8d7da;
+    }
+    .analysis-card {
+      background-color: #f8f9fa;
+      border-left: 4px solid #007bff;
+      padding: 15px;
+      margin: 20px 0;
+    }
+    .method-description {
+      background-color: #e9ecef;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 10px 0;
+    }
+  </style>
+{% endblock %}
+
+{% block title %}
+  Comparación de Métodos Numéricos
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <h1 class="font-weight-bold mb-4 text-center">Comparación de Métodos Numéricos</h1>
+    <p class="text-center text-muted mb-4">
+      Resuelve ecuaciones no lineales usando Bisección y Punto Fijo, y compara sus resultados
+    </p>
+    
+    <div class="row">
+      <div class="col-md-6">
+        {% include 'components/input_guidelines/card_SNENL.html' %}
+        
+        <div class="method-description">
+          <h5><i class="fas fa-info-circle"></i> Método de Bisección</h5>
+          <p>Requiere un intervalo [a,b] donde f(a)×f(b)&lt;0. Siempre converge pero puede ser lento.</p>
+        </div>
+        
+        <div class="method-description">
+          <h5><i class="fas fa-info-circle"></i> Método de Punto Fijo</h5>
+          <p>Reformula f(x)=0 como x=g(x). Converge rápidamente si g(x) está bien elegida.</p>
+        </div>
+      </div>
+      
+      <div class="col-md-6">
+        <form method="POST" action="{% url 'numerical_method:comparison' %}">
+          {% csrf_token %}
+          
+          <div class="card mb-3">
+            <div class="card-header">
+              <h5><i class="fas fa-cog"></i> Parámetros para Bisección</h5>
+            </div>
+            <div class="card-body">
+              <div class="form-group">
+                <label for="interval_a">Punto A (límite inferior):</label>
+                <input type="number" class="form-control" id="interval_a" name="interval_a" 
+                       placeholder="Ejemplo: -2" step="any" required 
+                       value="{{ template_data.form_data.interval_a|default:'' }}" />
+              </div>
+              <div class="form-group">
+                <label for="interval_b">Punto B (límite superior):</label>
+                <input type="number" class="form-control" id="interval_b" name="interval_b" 
+                       placeholder="Ejemplo: 2" step="any" required 
+                       value="{{ template_data.form_data.interval_b|default:'' }}" />
+              </div>
+            </div>
+          </div>
+          
+          <div class="card mb-3">
+            <div class="card-header">
+              <h5><i class="fas fa-cog"></i> Parámetros para Punto Fijo</h5>
+            </div>
+            <div class="card-body">
+              <div class="form-group">
+                <label for="x0">X₀ (punto inicial):</label>
+                <input type="number" class="form-control" id="x0" name="x0" 
+                       placeholder="Ejemplo: 1.5" step="any" required 
+                       value="{{ template_data.form_data.x0|default:'' }}" />
+              </div>
+              <div class="form-group">
+                <label for="function_g">Función g(x) (equivalente):</label>
+                <input type="text" class="form-control" id="function_g" name="function_g" 
+                       placeholder="Ejemplo: x - (x**2 - 2)/2" required 
+                       value="{{ template_data.form_data.function_g|default:'' }}" />
+              </div>
+            </div>
+          </div>
+          
+          <div class="card mb-3">
+            <div class="card-header">
+              <h5><i class="fas fa-sliders-h"></i> Parámetros Generales</h5>
+            </div>
+            <div class="card-body">
+              <div class="form-group">
+                <label for="function_f">Función f(x):</label>
+                <input type="text" class="form-control" id="function_f" name="function_f" 
+                       placeholder="Ejemplo: x**2 - 2" required 
+                       value="{{ template_data.form_data.function_f|default:'' }}" />
+              </div>
+              <div class="form-group">
+                <label for="tolerance">Tolerancia (ε):</label>
+                <input type="number" class="form-control" id="tolerance" name="tolerance" 
+                       placeholder="Ejemplo: 0.001" step="any" required 
+                       value="{{ template_data.form_data.tolerance|default:'' }}" />
+              </div>
+              <div class="form-group">
+                <label for="max_iterations">Máximo de iteraciones:</label>
+                <input type="number" class="form-control" id="max_iterations" name="max_iterations" 
+                       placeholder="Ejemplo: 100" required 
+                       value="{{ template_data.form_data.max_iterations|default:'' }}" />
+              </div>
+              
+              <div class="mb-3">
+                <label>Precisión:</label>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="precision" id="correct_decimals" 
+                         value="1" {% if template_data.form_data.precision == 1 %}checked{% endif %} />
+                  <label class="form-check-label" for="correct_decimals">Decimales correctos</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="precision" id="significant_numbers" 
+                         value="0" {% if template_data.form_data.precision == 0 %}checked{% endif %} />
+                  <label class="form-check-label" for="significant_numbers">Cifras significativas</label>
+                </div>
+              </div>
+              
+              <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="generate_pdf" name="generate_pdf" 
+                       {% if template_data.form_data.generate_pdf %}checked{% endif %} />
+                <label class="form-check-label" for="generate_pdf">
+                  <i class="fas fa-file-pdf"></i> ¿Generar informe comparativo en PDF?
+                </label>
+              </div>
+            </div>
+          </div>
+          
+          <button type="submit" class="btn btn-primary btn-lg btn-block">
+            <i class="fas fa-calculator"></i> Ejecutar Comparación
+          </button>
+        </form>
+      </div>
+    </div>
+    
+    {% if template_data.comparison_data %}
+      <div class="card mt-4">
+        <div class="card-header">
+          <h3><i class="fas fa-chart-bar"></i> Resultados Comparativos</h3>
+        </div>
+        <div class="card-body">
+          
+          <!-- Tabla comparativa -->
+          <h4>Tabla Resumen Comparativa</h4>
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>Método</th>
+                <th>Estado</th>
+                <th>Iteraciones</th>
+                <th>Raíz aproximada</th>
+                <th>Error final</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for method in template_data.comparison_data.methods %}
+                <tr class="{% if method.have_solution %}success-row{% else %}error-row{% endif %}">
+                  <td><strong>{{ method.method }}</strong></td>
+                  <td>
+                    {% if method.have_solution %}
+                      <i class="fas fa-check-circle text-success"></i> {{ method.status }}
+                    {% else %}
+                      <i class="fas fa-times-circle text-danger"></i> {{ method.status }}
+                    {% endif %}
+                  </td>
+                  <td>{{ method.iterations }}</td>
+                  <td>
+                    {% if method.root != "N/A" %}
+                      {{ method.root|floatformat:6 }}
+                    {% else %}
+                      {{ method.root }}
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if method.final_error != "N/A" %}
+                      {{ method.final_error|floatformat:"2e" }}
+                    {% else %}
+                      {{ method.final_error }}
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          
+          <!-- Análisis -->
+          {% if template_data.comparison_data.has_valid_results %}
+            <div class="analysis-card">
+              <h4><i class="fas fa-brain"></i> Análisis Automático</h4>
+              
+              {% if template_data.comparison_data.analysis.most_efficient %}
+                <p><strong>Método más eficiente:</strong> 
+                   <span class="badge badge-success">{{ template_data.comparison_data.analysis.most_efficient }}</span>
+                   (Menor número de iteraciones)
+                </p>
+              {% endif %}
+              
+              {% if template_data.comparison_data.analysis.most_accurate %}
+                <p><strong>Método más preciso:</strong> 
+                   <span class="badge badge-info">{{ template_data.comparison_data.analysis.most_accurate }}</span>
+                   (Menor error final)
+                </p>
+              {% endif %}
+              
+              {% if template_data.comparison_data.analysis.best_overall %}
+                <p><strong>Mejor método general:</strong> 
+                   <span class="badge badge-primary">{{ template_data.comparison_data.analysis.best_overall }}</span>
+                </p>
+              {% endif %}
+              
+              <div class="alert alert-info mt-3">
+                <h5><i class="fas fa-lightbulb"></i> Conclusión Sugerida:</h5>
+                <p>{{ template_data.comparison_data.analysis.summary }}</p>
+              </div>
+            </div>
+          {% else %}
+            <div class="alert alert-warning">
+              <h5><i class="fas fa-exclamation-triangle"></i> Sin resultados válidos</h5>
+              <p>Ninguno de los métodos pudo encontrar una solución. Verifique los parámetros de entrada.</p>
+            </div>
+          {% endif %}
+          
+          <!-- Gráfica -->
+          {% if template_data.comparison_data.has_valid_results %}
+            <div class="text-center mt-4">
+              <h4><i class="fas fa-chart-line"></i> Gráfica de la función</h4>
+              <img src="{% static 'img/numerical_method/function_plot.svg' %}" alt="Gráfica de la función" class="img-fluid" width="800px" />
+            </div>
+          {% endif %}
+          
+          <!-- Botón de descarga PDF -->
+          {% if template_data.pdf_path %}
+            <div class="text-center mt-4">
+              <a href="{% static 'reports/' %}{{ template_data.pdf_path }}" class="btn btn-success btn-lg" download>
+                <i class="fas fa-download"></i> Descargar Informe PDF
+              </a>
+            </div>
+          {% endif %}
+          
+        </div>
+      </div>
+      
+      <!-- Detalles técnicos -->
+      <div class="card mt-4">
+        <div class="card-header">
+          <h4><i class="fas fa-cogs"></i> Detalles Técnicos</h4>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <h5>Parámetros Utilizados:</h5>
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item"><strong>Tolerancia:</strong> {{ template_data.form_data.tolerance }}</li>
+                <li class="list-group-item"><strong>Máx. iteraciones:</strong> {{ template_data.form_data.max_iterations }}</li>
+                <li class="list-group-item"><strong>Función f(x):</strong> {{ template_data.form_data.function_f }}</li>
+                {% if template_data.form_data.function_g %}
+                  <li class="list-group-item"><strong>Función g(x):</strong> {{ template_data.form_data.function_g }}</li>
+                {% endif %}
+              </ul>
+            </div>
+            <div class="col-md-6">
+              <h5>Descripción de Métodos:</h5>
+              <div class="accordion" id="methodsAccordion">
+                <div class="card">
+                  <div class="card-header" id="bisectionHeader">
+                    <h6 class="mb-0">
+                      <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#bisectionCollapse">
+                        Método de Bisección
+                      </button>
+                    </h6>
+                  </div>
+                  <div id="bisectionCollapse" class="collapse" data-parent="#methodsAccordion">
+                    <div class="card-body">
+                      Encuentra raíces dividiendo repetidamente el intervalo por la mitad. 
+                      Robusto y siempre converge si f(a)×f(b)&lt;0.
+                    </div>
+                  </div>
+                </div>
+                <div class="card">
+                  <div class="card-header" id="fixedPointHeader">
+                    <h6 class="mb-0">
+                      <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#fixedPointCollapse">
+                        Método de Punto Fijo
+                      </button>
+                    </h6>
+                  </div>
+                  <div id="fixedPointCollapse" class="collapse" data-parent="#methodsAccordion">
+                    <div class="card-body">
+                      Reformula f(x)=0 como x=g(x) y usa iteraciones x_{n+1}=g(x_n). 
+                      Converge rápidamente cuando g'(x)&lt;1 en la región de la raíz.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}
+
+{% block extra_js %}
+  <script>
+    // Validación del formulario
+    document.querySelector('form').addEventListener('submit', function(e) {
+      const functionF = document.getElementById('function_f').value;
+      const functionG = document.getElementById('function_g').value;
+      const intervalA = parseFloat(document.getElementById('interval_a').value);
+      const intervalB = parseFloat(document.getElementById('interval_b').value);
+      
+      if (intervalA >= intervalB) {
+        e.preventDefault();
+        alert('El punto A debe ser menor que el punto B para el método de bisección.');
+        return false;
+      }
+      
+      if (!functionF.trim() || !functionG.trim()) {
+        e.preventDefault();
+        alert('Debe ingresar ambas funciones f(x) y g(x).');
+        return false;
+      }
+    });
+    
+    // Ejemplos automáticos
+    document.getElementById('load-example').addEventListener('click', function() {
+      document.getElementById('function_f').value = 'x**2 - 2';
+      document.getElementById('function_g').value = 'math.sqrt(2)';
+      document.getElementById('interval_a').value = '0';
+      document.getElementById('interval_b').value = '2';
+      document.getElementById('x0').value = '1.5';
+      document.getElementById('tolerance').value = '0.001';
+      document.getElementById('max_iterations').value = '100';
+    });
+  </script>
+{% endblock %}

@@ -6,9 +6,6 @@ from src.application.numerical_method.services.regula_falsi_service import (
 from src.application.numerical_method.services.fixed_point_service import (
     FixedPointService,
 )
-from src.application.numerical_method.services.fixed_point_service import (
-    FixedPointService,
-)
 from src.application.numerical_method.services.newton_raphson_service import (
     NewtonService,
 )
@@ -44,6 +41,10 @@ from src.application.numerical_method.services.lagrange_service import (
 from src.application.numerical_method.services.newton_interpol_service import (
   NewtonInterpolService,
 )
+from src.application.numerical_method.services.comparison_service import (
+    ComparisonService,
+)
+
 
 
 class NumericalMethodContainer(containers.DeclarativeContainer):
@@ -63,7 +64,4 @@ class NumericalMethodContainer(containers.DeclarativeContainer):
     lagrange_service = providers.Factory(LagrangeService)
     newton_interpol_service = providers.Factory(NewtonInterpolService)
     #ec_nolineales_service = providers.Factory(ECNoLinealesService)
-
-    #OJOOOOOOOOOOOO CORREGIR
-    simpson_service = providers.Factory(SplineCubicService) # Placeholder for Simpson service 
-    trapezoidal_service = providers.Factory(SplineCubicService) # Placeholder for trapezoidal service
+    comparison_service = providers.Factory(ComparisonService)
