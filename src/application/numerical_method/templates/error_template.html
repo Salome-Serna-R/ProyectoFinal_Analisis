@@ -1,0 +1,32 @@
+{% extends 'layouts/app.html' %}
+{% load static %}
+
+{% block title %}
+  Error de convergencia
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <h2>Error de convergencia</h2>
+        <p>{{ message }}</p>
+
+        {% if details %}
+        <h3>Iteraciones:</h3>
+        <ul>
+            {% for step in details %}
+            <li>x = {{ step.x }}, f(x) = {{ step.fx }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        <p>El método no ha convergido en el número máximo de iteraciones permitido.</p>
+        <p>Por favor, revise los parámetros de entrada o intente con un método diferente.</p>
+        <a href="{% url 'numerical_method:index' %}" class="btn btn-primary">Volver al inicio</a>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+
+

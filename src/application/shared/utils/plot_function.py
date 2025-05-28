@@ -13,6 +13,29 @@ def plot_function(
 ) -> None:
     output_file = BASE_DIR / "static/img/numerical_method/function_plot.svg"
 
+    # Filtrar x válidos (reales y finitos)
+    if not isinstance(points, list) or not all(
+        isinstance(point, tuple) and len(point) == 2 for point in points
+    ):
+        raise ValueError("Points must be a list of tuples with two elements each.")
+    filtered_x = [
+        point[0] for point in points if isinstance(point[0], (int, float)) and not np.isnan(point[0]) and not np.isinf(point[0])
+    ]
+
+    # Evitar graficar si no hay puntos válidos
+    if not filtered_x:
+        print("No se pudo graficar: valores no válidos.")
+        return
+    # Verificar si hay solución
+    if not have_solution:
+        points = [(0, 0)]  # Si no hay solución, graficar un punto en el origen
+    elif not points:
+        raise ValueError("Points must contain at least one valid point if have_solution is True.")
+    # Asegurarse de que la función sea una cadena válida
+    if not isinstance(function_f, str):
+        raise ValueError("Function must be a string representing a valid mathematical expression.")
+    
+
     # Obtener los valores de x y y de los puntos para el rango de la gráfica
     x_coords = [point[0] for point in points]
     y_coords = [point[1] for point in points]

@@ -1,3 +1,4 @@
+from django.shortcuts import render
 from django.views.generic import TemplateView
 from src.application.numerical_method.interfaces.iterative_method import (
     IterativeMethod,
@@ -78,5 +79,10 @@ class NewtonRaphsonView(TemplateView):
             )
         template_data = template_data | method_response
         context["template_data"] = template_data
-        return self.render_to_response(context)
- 
+        if not method_response.get("success", True):
+            return render(request, "error_template.html", {
+                "message": method_response["message"],
+                "details": method_response.get("iterations", [])
+            })
+        else:
+            return self.render_to_response(context)
