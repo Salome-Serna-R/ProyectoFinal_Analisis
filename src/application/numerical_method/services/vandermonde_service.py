@@ -11,15 +11,15 @@ class VandermondeService(InterpolationMethod):
         x: list[float],
         y: list[float],
     ) -> dict:
-        # Definimos la longitud nxn que va a tener la matriz y la inicializamos en 0.
+        # Definimos la longitud nxn que va a tener la matriz y la inicializamos en 0
         n = len(x)
         V = np.zeros((n, n))
 
-        # Llenamos la matriz con los valores de x elevados a la potencia j (matriz de vandermonde).
+        # Llenamos la matriz con los valores de x elevados a la potencia j (matriz de vandermonde)
         for i in range(n):
             for j in range(n):
                 V[i, j] = x[i] ** j
-        # Resolvemos el sistema de ecuaciones lineales para encontrar los coeficientes del polinomio.
+        # Resolvemos el sistema de ecuaciones lineales para encontrar los coeficientes del polinomio
         coefficients = np.linalg.solve(V, y)
 
         # Construimos el polinomio a partir de los coeficientes obtenidos.

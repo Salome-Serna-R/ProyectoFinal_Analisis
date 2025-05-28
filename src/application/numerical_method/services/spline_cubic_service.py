@@ -47,7 +47,7 @@ class SplineCubicService(InterpolationMethod):
     ) -> str | list[tuple[float, float]]:
         max_points = 8
 
-        # Convertir las cadenas de entrada en listas
+        # Convertir las cadenas de entrada en listas.
         x_list = [value.strip() for value in x_input.split(" ") if value.strip()]
         y_list = [value.strip() for value in y_input.split(" ") if value.strip()]
 
