@@ -22,14 +22,14 @@ class SplineLinearService(InterpolationMethod):
         equations = []
 
         for i in range(n - 1):
-            # Calcular la pendiente (m)
+            # Calcular la pendiente (m).
             m = (y[i + 1] - y[i]) / (x[i + 1] - x[i])
-            # Construir el polinomio en formato evaluable
+            # Construir el polinomio en formato evaluable.
             tramo = f"{m:.4f}*(x - ({x[i]:.4f})) + {y[i]:.4f}"
             tramos.append(tramo)
             equations.append(f"Tramo {i + 1}: {tramo}")
 
-        # Generar la gráfica del spline
+        # Generar la gráfica del spline REVISARRRRR que si funciona
         points = list(zip(x, y))
         sorted_points = sorted(points, key=lambda point: point[0])
         plot_spline_linear(sorted_points)
