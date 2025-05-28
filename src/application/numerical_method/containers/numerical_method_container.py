@@ -44,6 +44,9 @@ from src.application.numerical_method.services.newton_interpol_service import (
 from src.application.numerical_method.services.comparison_service import (
     ComparisonService,
 )
+from src.application.numerical_method.services.comparison_service2 import (
+    ComparisonService as ComparisonLinearService,
+)
 
 
 
@@ -65,3 +68,4 @@ class NumericalMethodContainer(containers.DeclarativeContainer):
     newton_interpol_service = providers.Factory(NewtonInterpolService)
     #ec_nolineales_service = providers.Factory(ECNoLinealesService)
     comparison_service = providers.Factory(ComparisonService)
+    comparison_linear_service = providers.Factory(ComparisonLinearService)

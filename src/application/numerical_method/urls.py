@@ -16,6 +16,8 @@ from .views.spline_cubic_view import SplineCubicView
 from .views.lagrange_view import LagrangeView
 from .views.newton_interpol_view import NewtonInterpolView
 from .views.comparison_view import ComparisonView
+from .views.comparison_view2 import ComparisonLinearView
+
 
 app_name = "numerical_method"
 urlpatterns = [
@@ -104,6 +106,11 @@ urlpatterns = [
         "comparison/",
         ComparisonView.as_view(),
         name="comparison",
+    ),
+        path(
+        "comparison-linear/",
+        ComparisonLinearView.as_view(),
+        name="comparison_linear",
     ),
 
 ]
