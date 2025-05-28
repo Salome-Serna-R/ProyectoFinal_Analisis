@@ -37,6 +37,22 @@
       border-radius: 5px;
       margin: 10px 0;
     }
+    .method-card {
+      border: 1px solid #dee2e6;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+    .method-card .card-header {
+      background-color: #f8f9fa;
+      border-bottom: 1px solid #dee2e6;
+    }
+    .validation-error {
+      background-color: #f8d7da;
+      color: #721c24;
+      padding: 10px;
+      border-radius: 4px;
+      margin-top: 10px;
+    }
   </style>
 {% endblock %}
 
@@ -48,7 +64,7 @@
   <div class="container">
     <h1 class="font-weight-bold mb-4 text-center">Comparación de Métodos Numéricos</h1>
     <p class="text-center text-muted mb-4">
-      Resuelve ecuaciones no lineales usando Bisección y Punto Fijo, y compara sus resultados
+      Resuelve ecuaciones no lineales usando 5 métodos y compara sus resultados
     </p>
     
     <div class="row">
@@ -64,15 +80,68 @@
           <h5><i class="fas fa-info-circle"></i> Método de Punto Fijo</h5>
           <p>Reformula f(x)=0 como x=g(x). Converge rápidamente si g(x) está bien elegida.</p>
         </div>
+        
+        <div class="method-description">
+          <h5><i class="fas fa-info-circle"></i> Método de Newton-Raphson</h5>
+          <p>Usa la derivada f'(x) para convergencia cuadrática. Requiere punto inicial adecuado.</p>
+        </div>
+
+        <div class="method-description">
+          <h5><i class="fas fa-info-circle"></i> Método de Regla Falsa</h5>
+          <p>Similar a bisección pero usa interpolación lineal. Converge más rápido que bisección.</p>
+        </div>
+
+        <div class="method-description">
+          <h5><i class="fas fa-info-circle"></i> Método de la Secante</h5>
+          <p>Aproxima la derivada usando dos puntos. No requiere derivada explícita.</p>
+        </div>
+        
+        <!-- Botón para cargar ejemplo -->
+        <div class="text-center mt-3">
+          <button type="button" id="load-example" class="btn btn-info">
+            <i class="fas fa-lightbulb"></i> Cargar Ejemplo
+          </button>
+        </div>
       </div>
       
       <div class="col-md-6">
         <form method="POST" action="{% url 'numerical_method:comparison' %}">
           {% csrf_token %}
           
-          <div class="card mb-3">
+          <!-- Parámetros Generales -->
+          <div class="method-card">
             <div class="card-header">
-              <h5><i class="fas fa-cog"></i> Parámetros para Bisección</h5>
+              <h5><i class="fas fa-function"></i> Función Principal</h5>
+            </div>
+            <div class="card-body">
+              <div class="form-group">
+                <label for="function_f">Función f(x):</label>
+                <input type="text" class="form-control" id="function_f" name="function_f" 
+                       placeholder="Ejemplo: x**2 - 2" required 
+                       value="{{ template_data.form_data.function_f|default:'' }}" />
+                <small class="form-text text-muted">
+                  Use sintaxis Python: x**2, math.sin(x), math.exp(x), etc.
+                </small>
+              </div>
+              <div class="form-group">
+                <label for="tolerance">Tolerancia (ε):</label>
+                <input type="number" class="form-control" id="tolerance" name="tolerance" 
+                       placeholder="Ejemplo: 0.001" step="any" required 
+                       value="{{ template_data.form_data.tolerance|default:'' }}" />
+              </div>
+              <div class="form-group">
+                <label for="max_iterations">Máximo de iteraciones:</label>
+                <input type="number" class="form-control" id="max_iterations" name="max_iterations" 
+                       placeholder="Ejemplo: 100" required 
+                       value="{{ template_data.form_data.max_iterations|default:'' }}" />
+              </div>
+            </div>
+          </div>
+          
+          <!-- Parámetros para Bisección -->
+          <div class="method-card">
+            <div class="card-header">
+              <h5><i class="fas fa-divide"></i> Método de Bisección</h5>
             </div>
             <div class="card-body">
               <div class="form-group">
@@ -87,58 +156,107 @@
                        placeholder="Ejemplo: 2" step="any" required 
                        value="{{ template_data.form_data.interval_b|default:'' }}" />
               </div>
+              <small class="form-text text-muted">
+                Asegúrese de que f(a) y f(b) tengan signos opuestos
+              </small>
             </div>
           </div>
           
-          <div class="card mb-3">
+          <!-- Parámetros para Punto Fijo -->
+          <div class="method-card">
             <div class="card-header">
-              <h5><i class="fas fa-cog"></i> Parámetros para Punto Fijo</h5>
+              <h5><i class="fas fa-dot-circle"></i> Método de Punto Fijo</h5>
             </div>
             <div class="card-body">
               <div class="form-group">
-                <label for="x0">X₀ (punto inicial):</label>
-                <input type="number" class="form-control" id="x0" name="x0" 
+                <label for="x0_fixed">X₀ (punto inicial):</label>
+                <input type="number" class="form-control" id="x0_fixed" name="x0" 
                        placeholder="Ejemplo: 1.5" step="any" required 
                        value="{{ template_data.form_data.x0|default:'' }}" />
               </div>
               <div class="form-group">
                 <label for="function_g">Función g(x) (equivalente):</label>
                 <input type="text" class="form-control" id="function_g" name="function_g" 
-                       placeholder="Ejemplo: x - (x**2 - 2)/2" required 
+                       placeholder="Ejemplo: math.sqrt(2)" required 
                        value="{{ template_data.form_data.function_g|default:'' }}" />
+                <small class="form-text text-muted">
+                  Reformule f(x)=0 como x=g(x). Ejemplo: si f(x)=x²-2, entonces g(x)=√2
+                </small>
               </div>
             </div>
           </div>
           
-          <div class="card mb-3">
+          <!-- Parámetros para Newton-Raphson (usa el mismo x0) -->
+          <div class="method-card">
             <div class="card-header">
-              <h5><i class="fas fa-sliders-h"></i> Parámetros Generales</h5>
+              <h5><i class="fas fa-chart-line"></i> Método de Newton-Raphson</h5>
             </div>
             <div class="card-body">
-              <div class="form-group">
-                <label for="function_f">Función f(x):</label>
-                <input type="text" class="form-control" id="function_f" name="function_f" 
-                       placeholder="Ejemplo: x**2 - 2" required 
-                       value="{{ template_data.form_data.function_f|default:'' }}" />
+              <p class="text-muted mb-2">
+                <i class="fas fa-info-circle"></i> 
+                Este método usa el mismo punto inicial (X₀) que el método de Punto Fijo y 
+                calcula automáticamente la derivada de f(x).
+              </p>
+              <div class="alert alert-info">
+                <small>
+                  <strong>Nota:</strong> La derivada se calcula automáticamente usando diferenciación numérica.
+                  Asegúrese de que f(x) sea diferenciable en el punto inicial.
+                </small>
               </div>
-              <div class="form-group">
-                <label for="tolerance">Tolerancia (ε):</label>
-                <input type="number" class="form-control" id="tolerance" name="tolerance" 
-                       placeholder="Ejemplo: 0.001" step="any" required 
-                       value="{{ template_data.form_data.tolerance|default:'' }}" />
+            </div>
+          </div>
+
+          <!-- Parámetros para Regla Falsa (usa el mismo intervalo que bisección) -->
+          <div class="method-card">
+            <div class="card-header">
+              <h5><i class="fas fa-balance-scale"></i> Método de Regla Falsa</h5>
+            </div>
+            <div class="card-body">
+              <p class="text-muted mb-2">
+                <i class="fas fa-info-circle"></i> 
+                Este método usa el mismo intervalo [a,b] que el método de Bisección.
+                Calcula el punto de intersección de la línea secante con el eje x.
+              </p>
+              <div class="alert alert-info">
+                <small>
+                  <strong>Nota:</strong> Requiere que f(a) y f(b) tengan signos opuestos.
+                  Suele converger más rápido que bisección.
+                </small>
               </div>
-              <div class="form-group">
-                <label for="max_iterations">Máximo de iteraciones:</label>
-                <input type="number" class="form-control" id="max_iterations" name="max_iterations" 
-                       placeholder="Ejemplo: 100" required 
-                       value="{{ template_data.form_data.max_iterations|default:'' }}" />
+            </div>
+          </div>
+
+          <!-- Parámetros para Secante (usa el mismo x0) -->
+          <div class="method-card">
+            <div class="card-header">
+              <h5><i class="fas fa-slash"></i> Método de la Secante</h5>
+            </div>
+            <div class="card-body">
+              <p class="text-muted mb-2">
+                <i class="fas fa-info-circle"></i> 
+                Este método usa el mismo punto inicial (X₀) que el método de Punto Fijo.
+                Requiere un segundo punto inicial que se calcula automáticamente.
+              </p>
+              <div class="alert alert-info">
+                <small>
+                  <strong>Nota:</strong> No requiere el cálculo explícito de la derivada.
+                  Puede ser más rápido que Newton-Raphson en algunos casos.
+                </small>
               </div>
-              
+            </div>
+          </div>
+          
+          <!-- Opciones adicionales -->
+          <div class="method-card">
+            <div class="card-header">
+              <h5><i class="fas fa-sliders-h"></i> Opciones Adicionales</h5>
+            </div>
+            <div class="card-body">
               <div class="mb-3">
                 <label>Precisión:</label>
                 <div class="form-check">
                   <input class="form-check-input" type="radio" name="precision" id="correct_decimals" 
-                         value="1" {% if template_data.form_data.precision == 1 %}checked{% endif %} />
+                         value="1" {% if template_data.form_data.precision == 1 or not template_data.form_data.precision %}checked{% endif %} />
                   <label class="form-check-label" for="correct_decimals">Decimales correctos</label>
                 </div>
                 <div class="form-check">
@@ -159,7 +277,7 @@
           </div>
           
           <button type="submit" class="btn btn-primary btn-lg btn-block">
-            <i class="fas fa-calculator"></i> Ejecutar Comparación
+            <i class="fas fa-calculator"></i> Ejecutar Comparación de los 5 Métodos
           </button>
         </form>
       </div>
@@ -172,6 +290,15 @@
         </div>
         <div class="card-body">
           
+          <!-- Mostrar errores de validación si los hay -->
+          {% for method in template_data.comparison_data.methods %}
+            {% if method.error and method.error != True %}
+              <div class="validation-error">
+                <strong>Error en {{ method.method }}:</strong> {{ method.error }}
+              </div>
+            {% endif %}
+          {% endfor %}
+          
           <!-- Tabla comparativa -->
           <h4>Tabla Resumen Comparativa</h4>
           <table class="comparison-table">
@@ -182,6 +309,7 @@
                 <th>Iteraciones</th>
                 <th>Raíz aproximada</th>
                 <th>Error final</th>
+                <th>Mensaje</th>
               </tr>
             </thead>
             <tbody>
@@ -210,45 +338,66 @@
                       {{ method.final_error }}
                     {% endif %}
                   </td>
+                  <td>
+                    <small>{{ method.message|default:"" }}</small>
+                  </td>
                 </tr>
               {% endfor %}
             </tbody>
           </table>
           
-          <!-- Análisis -->
+          <!-- Análisis mejorado -->
           {% if template_data.comparison_data.has_valid_results %}
             <div class="analysis-card">
               <h4><i class="fas fa-brain"></i> Análisis Automático</h4>
               
-              {% if template_data.comparison_data.analysis.most_efficient %}
-                <p><strong>Método más eficiente:</strong> 
-                   <span class="badge badge-success">{{ template_data.comparison_data.analysis.most_efficient }}</span>
-                   (Menor número de iteraciones)
-                </p>
-              {% endif %}
-              
-              {% if template_data.comparison_data.analysis.most_accurate %}
-                <p><strong>Método más preciso:</strong> 
-                   <span class="badge badge-info">{{ template_data.comparison_data.analysis.most_accurate }}</span>
-                   (Menor error final)
-                </p>
-              {% endif %}
-              
-              {% if template_data.comparison_data.analysis.best_overall %}
-                <p><strong>Mejor método general:</strong> 
-                   <span class="badge badge-primary">{{ template_data.comparison_data.analysis.best_overall }}</span>
-                </p>
-              {% endif %}
+              <div class="row">
+                <div class="col-md-6">
+                  {% if template_data.comparison_data.analysis.most_efficient %}
+                    <p><strong>Método más eficiente:</strong> 
+                       <span class="badge badge-success">{{ template_data.comparison_data.analysis.most_efficient }}</span>
+                       <small class="text-muted">(Menor número de iteraciones)</small>
+                    </p>
+                  {% endif %}
+                  
+                  {% if template_data.comparison_data.analysis.most_accurate %}
+                    <p><strong>Método más preciso:</strong> 
+                       <span class="badge badge-info">{{ template_data.comparison_data.analysis.most_accurate }}</span>
+                       <small class="text-muted">(Menor error final)</small>
+                    </p>
+                  {% endif %}
+                </div>
+                
+                <div class="col-md-6">
+                  {% if template_data.comparison_data.analysis.fastest_convergence %}
+                    <p><strong>Convergencia más rápida:</strong> 
+                       <span class="badge badge-warning">{{ template_data.comparison_data.analysis.fastest_convergence }}</span>
+                    </p>
+                  {% endif %}
+                  
+                  {% if template_data.comparison_data.analysis.best_overall %}
+                    <p><strong>Mejor método general:</strong> 
+                       <span class="badge badge-primary">{{ template_data.comparison_data.analysis.best_overall }}</span>
+                    </p>
+                  {% endif %}
+                </div>
+              </div>
               
               <div class="alert alert-info mt-3">
-                <h5><i class="fas fa-lightbulb"></i> Conclusión Sugerida:</h5>
+                <h5><i class="fas fa-lightbulb"></i> Conclusión Automática:</h5>
                 <p>{{ template_data.comparison_data.analysis.summary }}</p>
               </div>
             </div>
           {% else %}
             <div class="alert alert-warning">
               <h5><i class="fas fa-exclamation-triangle"></i> Sin resultados válidos</h5>
-              <p>Ninguno de los métodos pudo encontrar una solución. Verifique los parámetros de entrada.</p>
+              <p>Ninguno de los métodos pudo encontrar una solución. Verifique los parámetros de entrada y asegúrese de que:</p>
+              <ul>
+                <li>Para Bisección y Regla Falsa: f(a) y f(b) tengan signos opuestos</li>
+                <li>Para Punto Fijo: la función g(x) esté bien definida</li>
+                <li>Para Newton-Raphson y Secante: el punto inicial sea adecuado</li>
+                <li>La tolerancia y el número máximo de iteraciones sean apropiados</li>
+              </ul>
             </div>
           {% endif %}
           
@@ -256,7 +405,7 @@
           {% if template_data.comparison_data.has_valid_results %}
             <div class="text-center mt-4">
               <h4><i class="fas fa-chart-line"></i> Gráfica de la función</h4>
-              <img src="{% static 'img/numerical_method/function_plot.svg' %}" alt="Gráfica de la función" class="img-fluid" width="800px" />
+              <img src="{% static 'img/numerical_method/function_plot.svg' %}" alt="Gráfica de la función" class="img-fluid" style="max-width: 800px;" />
             </div>
           {% endif %}
           
@@ -264,7 +413,7 @@
           {% if template_data.pdf_path %}
             <div class="text-center mt-4">
               <a href="{% static 'reports/' %}{{ template_data.pdf_path }}" class="btn btn-success btn-lg" download>
-                <i class="fas fa-download"></i> Descargar Informe PDF
+                <i class="fas fa-download"></i> Descargar Informe Comparativo PDF
               </a>
             </div>
           {% endif %}
@@ -272,7 +421,7 @@
         </div>
       </div>
       
-      <!-- Detalles técnicos -->
+      <!-- Detalles técnicos mejorados -->
       <div class="card mt-4">
         <div class="card-header">
           <h4><i class="fas fa-cogs"></i> Detalles Técnicos</h4>
@@ -282,9 +431,11 @@
             <div class="col-md-6">
               <h5>Parámetros Utilizados:</h5>
               <ul class="list-group list-group-flush">
+                <li class="list-group-item"><strong>Función f(x):</strong> {{ template_data.form_data.function_f }}</li>
                 <li class="list-group-item"><strong>Tolerancia:</strong> {{ template_data.form_data.tolerance }}</li>
                 <li class="list-group-item"><strong>Máx. iteraciones:</strong> {{ template_data.form_data.max_iterations }}</li>
-                <li class="list-group-item"><strong>Función f(x):</strong> {{ template_data.form_data.function_f }}</li>
+                <li class="list-group-item"><strong>Intervalo [a,b]:</strong> [{{ template_data.form_data.interval_a }}, {{ template_data.form_data.interval_b }}]</li>
+                <li class="list-group-item"><strong>Punto inicial (x₀):</strong> {{ template_data.form_data.x0 }}</li>
                 {% if template_data.form_data.function_g %}
                   <li class="list-group-item"><strong>Función g(x):</strong> {{ template_data.form_data.function_g }}</li>
                 {% endif %}
@@ -304,7 +455,7 @@
                   <div id="bisectionCollapse" class="collapse" data-parent="#methodsAccordion">
                     <div class="card-body">
                       Encuentra raíces dividiendo repetidamente el intervalo por la mitad. 
-                      Robusto y siempre converge si f(a)×f(b)&lt;0.
+                      Robusto y siempre converge si f(a)×f(b)&lt;0. Convergencia lineal.
                     </div>
                   </div>
                 </div>
@@ -319,7 +470,53 @@
                   <div id="fixedPointCollapse" class="collapse" data-parent="#methodsAccordion">
                     <div class="card-body">
                       Reformula f(x)=0 como x=g(x) y usa iteraciones x_{n+1}=g(x_n). 
-                      Converge rápidamente cuando g'(x)&lt;1 en la región de la raíz.
+                      Converge rápidamente cuando |g'(x)|&lt;1 en la región de la raíz.
+                    </div>
+                  </div>
+                </div>
+                <div class="card">
+                  <div class="card-header" id="newtonHeader">
+                    <h6 class="mb-0">
+                      <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#newtonCollapse">
+                        Método de Newton-Raphson
+                      </button>
+                    </h6>
+                  </div>
+                  <div id="newtonCollapse" class="collapse" data-parent="#methodsAccordion">
+                    <div class="card-body">
+                      Usa la fórmula x_{n+1} = x_n - f(x_n)/f'(x_n). 
+                      Convergencia cuadrática cuando funciona, pero sensible al punto inicial.
+                    </div>
+                  </div>
+                </div>
+                <div class="card">
+                  <div class="card-header" id="regulaFalsiHeader">
+                    <h6 class="mb-0">
+                      <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#regulaFalsiCollapse">
+                        Método de Regla Falsa
+                      </button>
+                    </h6>
+                  </div>
+                  <div id="regulaFalsiCollapse" class="collapse" data-parent="#methodsAccordion">
+                    <div class="card-body">
+                      Similar a bisección pero usa interpolación lineal para aproximar la raíz.
+                      Calcula c=(a×f(b)-b×f(a))/(f(b)-f(a)). Converge más rápido que bisección.
+                    </div>
+                  </div>
+                </div>
+                <div class="card">
+                  <div class="card-header" id="secantHeader">
+                    <h6 class="mb-0">
+                      <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#secantCollapse">
+                        Método de la Secante
+                      </button>
+                    </h6>
+                  </div>
+                  <div id="secantCollapse" class="collapse" data-parent="#methodsAccordion">
+                    <div class="card-body">
+                      Aproxima la derivada usando dos puntos con la fórmula:
+                      x_{n+1} = x_n - f(x_n)×(x_n-x_{n-1})/(f(x_n)-f(x_{n-1})).
+                      No requiere derivada explícita y puede ser más rápido que Newton.
                     </div>
                   </div>
                 </div>
@@ -334,16 +531,20 @@
 
 {% block extra_js %}
   <script>
-    // Validación del formulario
+    // Validación mejorada del formulario
     document.querySelector('form').addEventListener('submit', function(e) {
       const functionF = document.getElementById('function_f').value;
       const functionG = document.getElementById('function_g').value;
       const intervalA = parseFloat(document.getElementById('interval_a').value);
       const intervalB = parseFloat(document.getElementById('interval_b').value);
+      const x0 = parseFloat(document.getElementById('x0_fixed').value);
+      const tolerance = parseFloat(document.getElementById('tolerance').value);
+      const maxIterations = parseInt(document.getElementById('max_iterations').value);
       
+      // Validaciones
       if (intervalA >= intervalB) {
         e.preventDefault();
-        alert('El punto A debe ser menor que el punto B para el método de bisección.');
+        alert('El punto A debe ser menor que el punto B para el método de bisección y regla falsa.');
         return false;
       }
       
@@ -352,17 +553,55 @@
         alert('Debe ingresar ambas funciones f(x) y g(x).');
         return false;
       }
+      
+      if (tolerance <= 0) {
+        e.preventDefault();
+        alert('La tolerancia debe ser un valor positivo.');
+        return false;
+      }
+      
+      if (maxIterations <= 0) {
+        e.preventDefault();
+        alert('El número máximo de iteraciones debe ser positivo.');
+        return false;
+      }
+      
+      if (isNaN(x0)) {
+        e.preventDefault();
+        alert('El punto inicial debe ser un número válido.');
+        return false;
+      }
     });
     
-    // Ejemplos automáticos
+    // Ejemplos automáticos mejorados
     document.getElementById('load-example').addEventListener('click', function() {
+      // Ejemplo: encontrar √2 (raíz de x²-2=0)
       document.getElementById('function_f').value = 'x**2 - 2';
-      document.getElementById('function_g').value = 'math.sqrt(2)';
+      document.getElementById('function_g').value = '2/x';  // Reformulación: x = 2/x
       document.getElementById('interval_a').value = '0';
       document.getElementById('interval_b').value = '2';
-      document.getElementById('x0').value = '1.5';
+      document.getElementById('x0_fixed').value = '1.5';
       document.getElementById('tolerance').value = '0.001';
       document.getElementById('max_iterations').value = '100';
+      
+      // Seleccionar decimales correctos por defecto
+      document.getElementById('correct_decimals').checked = true;
+      
+      alert('Ejemplo cargado: Encontrar √2 ≈ 1.414\n\n' +
+            'f(x) = x² - 2\n' +
+            'g(x) = 2/x (reformulación para punto fijo)\n' +
+            'Intervalo: [0, 2] para bisección y regla falsa\n' +
+            'Punto inicial: 1.5 para punto fijo, Newton-Raphson y secante');
+    });
+    
+    // Sincronizar tooltip cuando cambie la función
+    document.getElementById('function_f').addEventListener('input', function() {
+      const func = this.value;
+      if (func.includes('sin') || func.includes('cos') || func.includes('tan')) {
+        this.setAttribute('title', 'Recuerde usar math.sin(), math.cos(), math.tan() para funciones trigonométricas');
+      } else if (func.includes('exp') || func.includes('log')) {
+        this.setAttribute('title', 'Use math.exp() para exponencial y math.log() para logaritmo natural');
+      }
     });
   </script>
 {% endblock %}
