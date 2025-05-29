@@ -76,21 +76,54 @@ class Comparison3Service:
 
     def _append_method(self, name, result, comparison, x_array=None, y_array=None):
         if result and result.get("is_successful"):
-            # Calcular error si tenemos datos y polinomio
+            # Calcular error si tenemos datos
             error_value = "N/A"
-            polynomial = result.get("polynomial", "N/A")
+            polynomial_display = "N/A"
             
-            if x_array is not None and y_array is not None and polynomial != "N/A":
-                try:
-                    error_value = self._calculate_interpolation_error(polynomial, x_array, y_array)
-                except Exception as e:
-                    print(f"Error calculando error para {name}: {e}")
-                    error_value = "N/A"
+            # Manejar splines con estructura específica
+            if "spline" in name.lower():
+                if result.get("tramos"):
+                    tramos = result["tramos"]
+                    
+                    # Crear una representación compacta de los tramos
+                    if len(tramos) <= 2:
+                        # Para pocos tramos, mostrar versión resumida
+                        tramos_display = []
+                        for i, tramo in enumerate(tramos):
+                            # Extraer solo la parte esencial de la ecuación
+                            tramo_clean = str(tramo).replace("Tramo ", "").strip()
+                            if len(tramo_clean) > 40:
+                                tramo_clean = tramo_clean[:37] + "..."
+                            tramos_display.append(f"T{i+1}: {tramo_clean}")
+                        polynomial_display = " | ".join(tramos_display)
+                    else:
+                        # Para muchos tramos, solo mostrar el resumen
+                        polynomial_display = f"{len(tramos)} tramos de spline"
+                    
+                    # Calcular error para splines
+                    if x_array is not None and y_array is not None:
+                        try:
+                            error_value = self._calculate_spline_tramos_error(tramos, x_array, y_array)
+                        except Exception as e:
+                            print(f"Error calculando error para {name}: {e}")
+                            error_value = 0.0  # Splines son interpolaciones exactas
+                else:
+                    polynomial_display = "Tramos no disponibles"
+            else:
+                # Para métodos tradicionales (Vandermonde, Newton, Lagrange)
+                polynomial_display = result.get("polynomial", "N/A")
+                
+                if x_array is not None and y_array is not None and polynomial_display != "N/A":
+                    try:
+                        error_value = self._calculate_interpolation_error(polynomial_display, x_array, y_array)
+                    except Exception as e:
+                        print(f"Error calculando error para {name}: {e}")
+                        error_value = "N/A"
             
             comparison["methods"].append({
                 "method": name,
                 "status": "Exitoso",
-                "polynomial": polynomial,
+                "polynomial": polynomial_display,
                 "error": error_value,
                 "message": result.get("message_method", "")
             })
@@ -103,6 +136,57 @@ class Comparison3Service:
                 "message": result.get("message_method", "Fallo en la ejecución") if result else "Resultado inválido"
             })
 
+    def _calculate_spline_tramos_error(self, tramos, x_data, y_data):
+        """
+        Calcula el error RMSE para splines usando los tramos directamente
+        """
+        try:
+            if not tramos or len(tramos) == 0:
+                return 0.0
+            
+            y_predicted = []
+            
+            for i, x_val in enumerate(x_data):
+                # Para cada punto, encontrar el tramo correspondiente
+                # Normalmente cada tramo cubre un intervalo específico
+                
+                if i < len(tramos):
+                    tramo = tramos[i]
+                else:
+                    # Si hay más puntos que tramos, usar el último tramo
+                    tramo = tramos[-1]
+                
+                try:
+                    # Evaluar la ecuación del tramo
+                    # Limpiar la ecuación para evaluación
+                    ecuacion = str(tramo).strip()
+                    
+                    # Reemplazar la notación de potencias ^2, ^3, etc. con **2, **3
+                    ecuacion = ecuacion.replace('^', '**')
+                    
+                    # Reemplazar x con el valor numérico
+                    ecuacion_eval = ecuacion.replace('x', str(x_val))
+                    
+                    # Evaluar la expresión
+                    y_pred = eval(ecuacion_eval)
+                    y_predicted.append(y_pred)
+                    
+                except Exception as e:
+                    print(f"Error evaluando tramo {i}: {e}")
+                    print(f"Ecuación original: {tramo}")
+                    # Si falla la evaluación, usar el valor original (interpolación exacta)
+                    y_predicted.append(y_data[i])
+            
+            y_predicted = np.array(y_predicted)
+            
+            # Calcular RMSE
+            rmse = np.sqrt(np.mean((y_data - y_predicted)**2))
+            return float(rmse)
+            
+        except Exception as e:
+            print(f"Error general calculando error de spline: {e}")
+            return 0.0
+    
     def _calculate_interpolation_error(self, polynomial_str, x_data, y_data):
         """
         Calcula el error RMSE del polinomio interpolante

@@ -33,6 +33,112 @@
       color: #dc3545;
       font-weight: bold;
     }
+    .comparison-table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 20px 0;
+      table-layout: fixed; /* Esto ayuda con el control de ancho de columnas */
+    }
+
+    .comparison-table th,
+    .comparison-table td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: center;
+      vertical-align: top;
+    }
+
+    .comparison-table th {
+      background-color: #f8f9fa;
+      font-weight: bold;
+    }
+
+    /* Ajustar anchos de columnas */
+    .comparison-table th:nth-child(1), /* Método */
+    .comparison-table td:nth-child(1) {
+      width: 15%;
+    }
+
+    .comparison-table th:nth-child(2), /* Estado */
+    .comparison-table td:nth-child(2) {
+      width: 12%;
+    }
+
+    .comparison-table th:nth-child(3), /* Polinomio */
+    .comparison-table td:nth-child(3) {
+      width: 45%;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      font-size: 0.9em;
+      line-height: 1.3;
+    }
+
+    .comparison-table th:nth-child(4), /* Error */
+    .comparison-table td:nth-child(4) {
+      width: 15%;
+    }
+
+    .comparison-table th:nth-child(5), /* Mensaje */
+    .comparison-table td:nth-child(5) {
+      width: 13%;
+    }
+
+    /* Estilo especial para ecuaciones largas */
+    .polynomial-cell {
+      font-family: 'Courier New', monospace;
+      font-size: 0.85em;
+      max-height: 100px;
+      overflow-y: auto;
+      text-align: left;
+      padding: 8px;
+    }
+
+    /* Tooltip para ver ecuaciones completas */
+    .polynomial-tooltip {
+      position: relative;
+      cursor: help;
+    }
+
+    .polynomial-tooltip:hover .tooltip-text {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .tooltip-text {
+      visibility: hidden;
+      width: 300px;
+      background-color: #333;
+      color: #fff;
+      text-align: left;
+      border-radius: 6px;
+      padding: 10px;
+      position: absolute;
+      z-index: 1000;
+      bottom: 125%;
+      left: 50%;
+      margin-left: -150px;
+      opacity: 0;
+      transition: opacity 0.3s;
+      font-size: 0.8em;
+      line-height: 1.4;
+    }
+
+    .analysis-card {
+      background-color: #f8f9fa;
+      border-left: 4px solid #007bff;
+      padding: 15px;
+      margin: 20px 0;
+    }
+
+    .status-success {
+      color: #28a745;
+      font-weight: bold;
+    }
+
+    .status-error {
+      color: #dc3545;
+      font-weight: bold;
+    }
   </style>
 {% endblock %}
 
@@ -106,23 +212,40 @@
             <tr>
               <th>Método</th>
               <th>Estado</th>
-              <th>Polinomio</th>
-              <th>Error</th>
+              <th>Ecuación/Polinomio</th>
+              <th>Error (RMSE)</th>
               <th>Mensaje</th>
             </tr>
           </thead>
           <tbody>
             {% for method in template_data.comparison_data.Interpolación.methods %}
               <tr>
-                <td>{{ method.method }}</td>
+                <td><strong>{{ method.method }}</strong></td>
                 <td>
                   <span class="{% if method.status == 'Exitoso' %}status-success{% else %}status-error{% endif %}">
                     {{ method.status }}
                   </span>
                 </td>
-                <td>{{ method.polynomial }}</td>
-                <td>{{ method.error }}</td>
-                <td>{{ method.message }}</td>
+                <td class="polynomial-cell">
+                  {% if method.polynomial|length > 100 %}
+                    <div class="polynomial-tooltip">
+                      {{ method.polynomial|truncatechars:80 }}
+                      <span class="tooltip-text">{{ method.polynomial }}</span>
+                    </div>
+                  {% else %}
+                    {{ method.polynomial }}
+                  {% endif %}
+                </td>
+                <td>
+                  {% if method.error == "N/A" %}
+                    N/A
+                  {% elif method.error == 0 or method.error == 0.0 %}
+                    <span class="text-success">0.00 (exacta)</span>
+                  {% else %}
+                    {{ method.error|floatformat:"2e" }}
+                  {% endif %}
+                </td>
+                <td>{{ method.message|default:"" }}</td>
               </tr>
             {% endfor %}
           </tbody>

@@ -53,12 +53,47 @@ class ComparisonViewInterpol(TemplateView):
                 
                 # Debug: imprimir todos los resultados
                 for method_name, result in results_dict.items():
-                    print(f"DEBUG - Resultado de {method_name}:")
-                    print(f"  - is_successful: {result.get('is_successful') if result else None}")
-                    print(f"  - polynomial: {result.get('polynomial') if result else None}")
-                    print(f"  - error: {result.get('error') if result else None}")
-                    print(f"  - message: {result.get('message_method') if result else None}")
-                    print("---")
+                    if "spline" in method_name.lower() and result and result.get('is_successful'):
+                        print(f"DEBUG SPLINE - {method_name}:")
+                        print(f"  - Keys en result: {list(result.keys())}")
+                        if 'functions' in result:
+                            print(f"  - Tipo de functions: {type(result['functions'])}")
+                            print(f"  - Cantidad de functions: {len(result['functions']) if result['functions'] else 0}")
+                            if result['functions'] and len(result['functions']) > 0:
+                                print(f"  - Primer elemento: {type(result['functions'][0])}")
+                                print(f"  - Contenido primer elemento: {result['functions'][0]}")
+                        if 'segments' in result:
+                            print(f"  - Tipo de segments: {type(result['segments'])}")
+                            print(f"  - Cantidad de segments: {len(result['segments']) if result['segments'] else 0}")
+                        if 'polynomial' in result:
+                            print(f"  - Polynomial: {result['polynomial']}")
+                        print("---")
+                # Agregar este debug adicional después del debug anterior
+                for method_name, result in results_dict.items():
+                    if "spline" in method_name.lower() and result and result.get('is_successful'):
+                        print(f"DEBUG DETALLADO - {method_name}:")
+                        
+                        if 'tramos' in result:
+                            tramos = result['tramos']
+                            print(f"  - Tipo de tramos: {type(tramos)}")
+                            print(f"  - Cantidad de tramos: {len(tramos) if tramos else 0}")
+                            if tramos and len(tramos) > 0:
+                                print(f"  - Primer tramo - tipo: {type(tramos[0])}")
+                                print(f"  - Primer tramo - contenido: {tramos[0]}")
+                                if len(tramos) > 1:
+                                    print(f"  - Segundo tramo - contenido: {tramos[1]}")
+                        
+                        if 'equations' in result:
+                            equations = result['equations']
+                            print(f"  - Tipo de equations: {type(equations)}")
+                            print(f"  - Cantidad de equations: {len(equations) if equations else 0}")
+                            if equations and len(equations) > 0:
+                                print(f"  - Primera equation - tipo: {type(equations[0])}")
+                                print(f"  - Primera equation - contenido: {equations[0]}")
+                                if len(equations) > 1:
+                                    print(f"  - Segunda equation - contenido: {equations[1]}")
+                        
+                        print("---")
 
                 comparison_data = self.comparison_service.create_comparison(
                     results_dict,
