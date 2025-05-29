@@ -153,4 +153,6 @@ class Comparison3Service:
             story.append(Paragraph(analysis.get("summary", "No se pudo realizar el análisis."), styles['Normal']))
 
         doc.build(story)
-        return filename
+        pdf_path = os.path.join("reports", filename)
+
+        return pdf_path

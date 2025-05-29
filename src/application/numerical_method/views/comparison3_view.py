@@ -1,3 +1,4 @@
+import os
 from django.views.generic import TemplateView
 from django.http import HttpRequest, HttpResponse
 from dependency_injector.wiring import inject, Provide
@@ -24,11 +25,16 @@ class ComparisonViewInterpol(TemplateView):
 
         x_values_raw = request.POST.get("x_values")
         y_values_raw = request.POST.get("y_values")
+        generate_pdf = request.POST.get("generate_pdf") == "on"
 
         validations = {}
         results = {}
+        pdf_path = None  # Inicializar
 
         try:
+            generate_pdf = request.POST.get("generate_pdf") == "on"
+            pdf_path = None
+
             x = [float(val) for val in x_values_raw.strip().split()]
             y = [float(val) for val in y_values_raw.strip().split()]
 
@@ -47,6 +53,7 @@ class ComparisonViewInterpol(TemplateView):
                     "Spline lineal": self.spline_linear_service.solve(x, y),
                     "Spline cúbico": self.spline_cubic_service.solve(x, y),
                 }
+                
 
                 comparison_data = self.comparison_service.create_comparison(
                     results_dict,
@@ -56,6 +63,15 @@ class ComparisonViewInterpol(TemplateView):
                 )
 
                 results["Interpolación"] = comparison_data
+
+                # Generar PDF si se solicita y si hay resultados válidos
+                if generate_pdf and comparison_data.get("has_valid_results", True):
+                    form_data = {
+                        "x_values": x_values_raw,
+                        "y_values": y_values_raw
+                    }
+                    pdf_path = self.comparison_service.generate_pdf_report(comparison_data, form_data)
+                    # pdf_path debe ser la ruta relativa a static, ejemplo: 'reports/comparison3.pdf'
 
         except ValueError:
             validations["formato"] = {
@@ -69,8 +85,11 @@ class ComparisonViewInterpol(TemplateView):
             "form_data": {
                 "x_values": x_values_raw,
                 "y_values": y_values_raw
-            }
+            },
+            "pdf_path": pdf_path,
         }
 
         print("Context data:", context["template_data"])
+
         return self.render_to_response(context)
+
