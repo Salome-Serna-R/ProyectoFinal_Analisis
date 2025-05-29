@@ -19,11 +19,39 @@
       background-color: #f8f9fa;
       font-weight: bold;
     }
+    .success-row {
+      background-color: #d4edda;
+    }
+    .error-row {
+      background-color: #f8d7da;
+    }
     .analysis-card {
       background-color: #f8f9fa;
       border-left: 4px solid #007bff;
       padding: 15px;
       margin: 20px 0;
+    }
+    .method-description {
+      background-color: #e9ecef;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 10px 0;
+    }
+    .validation-error {
+      background-color: #f8d7da;
+      color: #721c24;
+      padding: 10px;
+      border-radius: 4px;
+      margin-top: 10px;
+    }
+    .input-card {
+      border: 1px solid #dee2e6;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+    .input-card .card-header {
+      background-color: #f8f9fa;
+      border-bottom: 1px solid #dee2e6;
     }
   </style>
 {% endblock %}
@@ -35,87 +63,339 @@
 {% block content %}
 <div class="container">
   <h1 class="font-weight-bold mb-4 text-center">Comparación de Métodos de Interpolación</h1>
+  <p class="text-center text-muted mb-4">
+    Compara diferentes métodos de interpolación y sus resultados
+  </p>
 
   <div class="row">
     <div class="col-md-6">
       {% include 'components/input_guidelines/card_SNENL.html' %}
+      
+      <div class="method-description">
+        <h5><i class="fas fa-info-circle"></i> Método de Lagrange</h5>
+        <p>Construye un polinomio único que pasa exactamente por todos los puntos dados. Simple pero puede ser inestable con muchos puntos.</p>
+      </div>
+      
+      <div class="method-description">
+        <h5><i class="fas fa-info-circle"></i> Método de Newton</h5>
+        <p>Usa diferencias divididas para construir el polinomio. Más eficiente que Lagrange para añadir nuevos puntos.</p>
+      </div>
+      
+      <div class="method-description">
+        <h5><i class="fas fa-info-circle"></i> Método de Spline Lineal</h5>
+        <p>Conecta cada par de puntos con una línea recta. Simple pero no suave en los nodos.</p>
+      </div>
+
+      <div class="method-description">
+        <h5><i class="fas fa-info-circle"></i> Método de Spline Cúbico</h5>
+        <p>Crea una curva suave que pasa por todos los puntos. Más complejo pero produce resultados más naturales.</p>
+      </div>
+      
+      <!-- Botón para cargar ejemplo -->
+      <div class="text-center mt-3">
+        <button type="button" id="load-example" class="btn btn-info">
+          <i class="fas fa-lightbulb"></i> Cargar Ejemplo
+        </button>
+      </div>
     </div>
 
     <div class="col-md-6">
       <form method="POST" action="{% url 'numerical_method:comparison_interpol' %}">
         {% csrf_token %}
 
-        <div class="card mb-3">
-          <div class="card-header"><strong>Entradas</strong></div>
+        <div class="input-card">
+          <div class="card-header">
+            <h5><i class="fas fa-table"></i> Datos de Entrada</h5>
+          </div>
           <div class="card-body">
             <div class="form-group">
-              <label for="x_values">Valores de X:</label>
+              <label for="x_values">Valores de X (separados por espacios):</label>
               <input type="text" class="form-control" id="x_values" name="x_values"
                      placeholder="Ejemplo: 1 2 3 4" required
                      value="{{ template_data.form_data.x_values|default:'' }}" />
             </div>
             <div class="form-group">
-              <label for="y_values">Valores de Y:</label>
+              <label for="y_values">Valores de Y (separados por espacios):</label>
               <input type="text" class="form-control" id="y_values" name="y_values"
                      placeholder="Ejemplo: 2 4 6 8" required
                      value="{{ template_data.form_data.y_values|default:'' }}" />
+              <small class="form-text text-muted">
+                Asegúrese de que el número de valores X coincida con el número de valores Y
+              </small>
             </div>
-            
-            <div class="form-check mt-3">
+          </div>
+        </div>
+
+        <div class="input-card">
+          <div class="card-header">
+            <h5><i class="fas fa-sliders-h"></i> Opciones Adicionales</h5>
+          </div>
+          <div class="card-body">
+            <div class="form-check mb-3">
               <input class="form-check-input" type="checkbox" id="generate_pdf" name="generate_pdf"
                      {% if template_data.form_data.generate_pdf %}checked{% endif %} />
               <label class="form-check-label" for="generate_pdf">
-                Generar informe en PDF
+                <i class="fas fa-file-pdf"></i> Generar informe comparativo en PDF
               </label>
             </div>
           </div>
         </div>
 
         <button type="submit" class="btn btn-primary btn-lg btn-block">
-          <i class="fas fa-balance-scale"></i> Comparar Métodos
+          <i class="fas fa-balance-scale"></i> Comparar Métodos de Interpolación
         </button>
       </form>
     </div>
   </div>
 
-  {% if template_data.comparison_data.Interpolación %}
-    <div class="card mt-5">
-      <div class="card-header"><h4>Resultados Comparativos</h4></div>
+  {% if template_data.comparison_data %}
+    <div class="card mt-4">
+      <div class="card-header">
+        <h3><i class="fas fa-chart-bar"></i> Resultados Comparativos</h3>
+      </div>
       <div class="card-body">
+        
+        <!-- Mostrar errores de validación si los hay -->
+        {% for method in template_data.comparison_data.methods %}
+          {% if method.error and method.error != True %}
+            <div class="validation-error">
+              <strong>Error en {{ method.method }}:</strong> {{ method.error }}
+            </div>
+          {% endif %}
+        {% endfor %}
+        
+        <!-- Tabla comparativa -->
+        <h4>Tabla Resumen Comparativa</h4>
         <table class="comparison-table">
           <thead>
             <tr>
               <th>Método</th>
-              <th>Polinomio</th>
+              <th>Estado</th>
+              <th>Polinomio/Resultado</th>
               <th>Mensaje</th>
             </tr>
           </thead>
           <tbody>
-            {% for method in template_data.comparison_data.Interpolación.methods %}
-              <tr>
-                <td>{{ method.method }}</td>
-                <td>{{ method.polynomial }}</td>
-                <td>{{ method.message }}</td>
+            {% for method in template_data.comparison_data.methods %}
+              <tr class="{% if method.have_solution %}success-row{% else %}error-row{% endif %}">
+                <td><strong>{{ method.method }}</strong></td>
+                <td>
+                  {% if method.have_solution %}
+                    <i class="fas fa-check-circle text-success"></i> {{ method.status }}
+                  {% else %}
+                    <i class="fas fa-times-circle text-danger"></i> {{ method.status }}
+                  {% endif %}
+                </td>
+                <td>{{ method.polynomial|default:"N/A" }}</td>
+                <td>
+                  <small>{{ method.message|default:"" }}</small>
+                </td>
               </tr>
             {% endfor %}
           </tbody>
         </table>
-
-        <div class="analysis-card">
-          <h5><i class="fas fa-lightbulb"></i> Análisis</h5>
-          <p><strong>Método más exacto:</strong> {{ template_data.comparison_data.Interpolación.analysis.most_accurate|default:"N/A" }}</p>
-          <p><strong>Observación:</strong> {{ template_data.comparison_data.Interpolación.analysis.summary }}</p>
-        </div>
-
+        
+        <!-- Análisis -->
+        {% if template_data.comparison_data.has_valid_results %}
+          <div class="analysis-card">
+            <h4><i class="fas fa-brain"></i> Análisis Automático</h4>
+            
+            <div class="row">
+              <div class="col-md-6">
+                {% if template_data.comparison_data.analysis.most_accurate %}
+                  <p><strong>Método más exacto:</strong> 
+                     <span class="badge badge-success">{{ template_data.comparison_data.analysis.most_accurate }}</span>
+                  </p>
+                {% endif %}
+              </div>
+              
+              <div class="col-md-6">
+                {% if template_data.comparison_data.analysis.best_for_points %}
+                  <p><strong>Mejor para estos puntos:</strong> 
+                     <span class="badge badge-primary">{{ template_data.comparison_data.analysis.best_for_points }}</span>
+                  </p>
+                {% endif %}
+              </div>
+            </div>
+            
+            <div class="alert alert-info mt-3">
+              <h5><i class="fas fa-lightbulb"></i> Conclusión Automática:</h5>
+              <p>{{ template_data.comparison_data.analysis.summary }}</p>
+            </div>
+          </div>
+        {% else %}
+          <div class="alert alert-warning">
+            <h5><i class="fas fa-exclamation-triangle"></i> Sin resultados válidos</h5>
+            <p>Ninguno de los métodos pudo producir una interpolación válida. Verifique:</p>
+            <ul>
+              <li>Que los valores X sean únicos (no repetidos)</li>
+              <li>Que haya al menos 2 puntos para interpolación lineal o 3 para spline cúbico</li>
+              <li>Que todos los valores sean numéricos</li>
+            </ul>
+          </div>
+        {% endif %}
+        
+        <!-- Gráfica -->
+        {% if template_data.comparison_data.has_valid_results %}
+          <div class="text-center mt-4">
+            <h4><i class="fas fa-chart-line"></i> Gráfica de Interpolación</h4>
+            <img src="{% static 'img/numerical_method/interpolation_plot.svg' %}" alt="Gráfica de interpolación" class="img-fluid" style="max-width: 800px;" />
+          </div>
+        {% endif %}
+        
+        <!-- Botón de descarga PDF -->
         {% if template_data.pdf_path %}
           <div class="text-center mt-4">
             <a href="{% static 'reports/' %}{{ template_data.pdf_path }}" class="btn btn-success btn-lg" download>
-              <i class="fas fa-file-pdf"></i> Descargar Informe PDF
+              <i class="fas fa-download"></i> Descargar Informe Comparativo PDF
             </a>
           </div>
         {% endif %}
       </div>
     </div>
+    
+    <!-- Detalles técnicos -->
+    <div class="card mt-4">
+      <div class="card-header">
+        <h4><i class="fas fa-cogs"></i> Detalles Técnicos</h4>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6">
+            <h5>Datos Utilizados:</h5>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">
+                <strong>Valores X:</strong> 
+                {{ template_data.form_data.x_values }}
+              </li>
+              <li class="list-group-item">
+                <strong>Valores Y:</strong> 
+                {{ template_data.form_data.y_values }}
+              </li>
+              <li class="list-group-item">
+                <strong>Número de puntos:</strong> 
+                {{ template_data.comparison_data.point_count }}
+              </li>
+            </ul>
+          </div>
+          <div class="col-md-6">
+            <h5>Descripción de Métodos:</h5>
+            <div class="accordion" id="methodsAccordion">
+              <div class="card">
+                <div class="card-header" id="lagrangeHeader">
+                  <h6 class="mb-0">
+                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#lagrangeCollapse">
+                      Método de Lagrange
+                    </button>
+                  </h6>
+                </div>
+                <div id="lagrangeCollapse" class="collapse" data-parent="#methodsAccordion">
+                  <div class="card-body">
+                    Construye un polinomio único de grado n-1 que pasa exactamente por n puntos.
+                    Fórmula: P(x) = Σ yᵢ × Lᵢ(x) donde Lᵢ son los polinomios base de Lagrange.
+                  </div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-header" id="newtonHeader">
+                  <h6 class="mb-0">
+                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#newtonCollapse">
+                      Método de Newton
+                    </button>
+                  </h6>
+                </div>
+                <div id="newtonCollapse" class="collapse" data-parent="#methodsAccordion">
+                  <div class="card-body">
+                    Usa diferencias divididas para construir el polinomio interpolante.
+                    Fórmula: P(x) = f[x₀] + f[x₀,x₁](x-x₀) + ... + f[x₀,...,xₙ](x-x₀)...(x-xₙ₋₁)
+                  </div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-header" id="linearSplineHeader">
+                  <h6 class="mb-0">
+                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#linearSplineCollapse">
+                      Spline Lineal
+                    </button>
+                  </h6>
+                </div>
+                <div id="linearSplineCollapse" class="collapse" data-parent="#methodsAccordion">
+                  <div class="card-body">
+                    Conecta cada par de puntos con una línea recta. Fórmula entre xᵢ y xᵢ₊₁:
+                    S(x) = yᵢ + (yᵢ₊₁ - yᵢ)/(xᵢ₊₁ - xᵢ) × (x - xᵢ)
+                  </div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-header" id="cubicSplineHeader">
+                  <h6 class="mb-0">
+                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#cubicSplineCollapse">
+                      Spline Cúbico
+                    </button>
+                  </h6>
+                </div>
+                <div id="cubicSplineCollapse" class="collapse" data-parent="#methodsAccordion">
+                  <div class="card-body">
+                    Crea una curva suave con polinomios cúbicos entre cada par de puntos,
+                    con continuidad en primera y segunda derivada en los nodos.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   {% endif %}
 </div>
+{% endblock %}
+
+{% block extra_js %}
+  <script>
+    // Validación del formulario
+    document.querySelector('form').addEventListener('submit', function(e) {
+      const xValues = document.getElementById('x_values').value.trim().split(/\s+/);
+      const yValues = document.getElementById('y_values').value.trim().split(/\s+/);
+      
+      // Validar que haya al menos 2 puntos
+      if (xValues.length < 2 || yValues.length < 2) {
+        e.preventDefault();
+        alert('Se necesitan al menos 2 puntos para interpolación');
+        return false;
+      }
+      
+      // Validar que coincida el número de puntos
+      if (xValues.length !== yValues.length) {
+        e.preventDefault();
+        alert('El número de valores X debe coincidir con el número de valores Y');
+        return false;
+      }
+      
+      // Validar que todos sean números
+      const allNumbers = [...xValues, ...yValues].every(v => !isNaN(parseFloat(v)));
+      if (!allNumbers) {
+        e.preventDefault();
+        alert('Todos los valores deben ser numéricos');
+        return false;
+      }
+      
+      // Validar que los valores X sean únicos
+      const uniqueX = new Set(xValues).size === xValues.length;
+      if (!uniqueX) {
+        e.preventDefault();
+        alert('Los valores de X no pueden repetirse');
+        return false;
+      }
+    });
+    
+    // Ejemplos automáticos
+    document.getElementById('load-example').addEventListener('click', function() {
+      // Ejemplo 1: Función cuadrática
+      document.getElementById('x_values').value = '1 2 3 4';
+      document.getElementById('y_values').value = '1 4 9 16';
+      
+      alert('Ejemplo cargado: Puntos (1,1), (2,4), (3,9), (4,16)\n\n' +
+            'Corresponde a la función cuadrática y = x²');
+    });
+  </script>
 {% endblock %}
