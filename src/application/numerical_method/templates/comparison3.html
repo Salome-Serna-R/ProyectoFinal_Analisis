@@ -78,7 +78,7 @@
     </div>
   </div>
 
-  {% if template_data.comparison_data %}
+  {% if template_data.comparison_data.Interpolación %}
     <div class="card mt-5">
       <div class="card-header"><h4>Resultados Comparativos</h4></div>
       <div class="card-body">
@@ -87,15 +87,15 @@
             <tr>
               <th>Método</th>
               <th>Polinomio</th>
-              <th>Valor interpolado en x = {{ template_data.form_data.x_eval }}</th>
+              <th>Mensaje</th>
             </tr>
           </thead>
           <tbody>
-            {% for method in template_data.comparison_data.methods %}
+            {% for method in template_data.comparison_data.Interpolación.methods %}
               <tr>
                 <td>{{ method.method }}</td>
                 <td>{{ method.polynomial }}</td>
-                <td>{{ method.result }}</td>
+                <td>{{ method.message }}</td>
               </tr>
             {% endfor %}
           </tbody>
@@ -103,8 +103,8 @@
 
         <div class="analysis-card">
           <h5><i class="fas fa-lightbulb"></i> Análisis</h5>
-          <p><strong>Método más exacto:</strong> {{ template_data.comparison_data.analysis.most_accurate }}</p>
-          <p><strong>Observación:</strong> {{ template_data.comparison_data.analysis.summary }}</p>
+          <p><strong>Método más exacto:</strong> {{ template_data.comparison_data.Interpolación.analysis.most_accurate|default:"N/A" }}</p>
+          <p><strong>Observación:</strong> {{ template_data.comparison_data.Interpolación.analysis.summary }}</p>
         </div>
 
         {% if template_data.pdf_path %}
