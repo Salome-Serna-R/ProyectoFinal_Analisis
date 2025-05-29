@@ -27,5 +27,6 @@ class NumericalMethodConfig(AppConfig):
                 "src.application.numerical_method.views.newton_interpol_view",
                 "src.application.numerical_method.views.comparison_view",
                 "src.application.numerical_method.views.comparison_view2",
+                "src.application.numerical_method.views.comparison3_view",
             ]
         )

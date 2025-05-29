@@ -13,7 +13,7 @@ class ComparisonViewInterpol(TemplateView):
     template_name = "comparison3.html"
 
     vandermonde_service: InterpolationMethod = Provide[NumericalMethodContainer.vandermonde_service]
-    newton_service: InterpolationMethod = Provide[NumericalMethodContainer.newton_service]
+    newton_interpol_service: InterpolationMethod = Provide[NumericalMethodContainer.newton_interpol_service]
     lagrange_service: InterpolationMethod = Provide[NumericalMethodContainer.lagrange_service]
     spline_linear_service: InterpolationMethod = Provide[NumericalMethodContainer.spline_linear_service]
     spline_cubic_service: InterpolationMethod = Provide[NumericalMethodContainer.spline_cubic_service]
@@ -42,7 +42,7 @@ class ComparisonViewInterpol(TemplateView):
 
                 results_dict = {
                     "Vandermonde": self.vandermonde_service.solve(x, y),
-                    "Newton": self.newton_service.solve(x, y),
+                    "Newton": self.newton_interpol_service.solve(x, y),
                     "Lagrange": self.lagrange_service.solve(x, y),
                     "Spline lineal": self.spline_linear_service.solve(x, y),
                     "Spline cúbico": self.spline_cubic_service.solve(x, y),
