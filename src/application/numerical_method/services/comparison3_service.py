@@ -8,20 +8,46 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, 
 
 class Comparison3Service:
 
-    def create_comparison(self, results_dict, validations=None):
+    def create_comparison(self, results_dict, validations, x_values=None, y_values=None):
         comparison = {
             "methods": [],
-            "analysis": {},
-            "has_valid_results": False
+            "has_valid_results": False,
+            "analysis": {}
         }
+        if not validations.get("formato", {}).get("valid", True):
+            comparison["methods"].append({
+                "method": "Error de formato",
+                "status": "Error",
+                "polynomial": "N/A",
+                "error": "N/A",
+                "message": validations["formato"]["message"]
+            })
+            return comparison
+
+        if not validations.get("longitud", {}).get("valid", True):
+            comparison["methods"].append({
+                "method": "Error de longitud",
+                "status": "Error",
+                "polynomial": "N/A",
+                "error": "N/A",
+                "message": validations["longitud"]["message"]
+            })
+            return comparison
 
         for name, result in results_dict.items():
-            self._append_method(name, result, comparison)
+            if result is None:
+                self._append_method(name, None, comparison)
+            else:
+                self._append_method(name, result, comparison)
 
-        if comparison["has_valid_results"]:
-            comparison["analysis"] = self._analyze_results(comparison["methods"])
+        if comparison["methods"]:
+            analysis = self._analyze_results(comparison["methods"])
+            comparison["analysis"] = analysis
+            comparison["has_valid_results"] = analysis.get("most_accurate") is not None
 
         return comparison
+
+    
 
     def _append_method(self, name, result, comparison):
         if result and result.get("is_successful"):

@@ -17,7 +17,7 @@ class ComparisonViewInterpol(TemplateView):
     lagrange_service: InterpolationMethod = Provide[NumericalMethodContainer.lagrange_service]
     spline_linear_service: InterpolationMethod = Provide[NumericalMethodContainer.spline_linear_service]
     spline_cubic_service: InterpolationMethod = Provide[NumericalMethodContainer.spline_cubic_service]
-    comparison_service: Comparison3Service = Provide[NumericalMethodContainer.comparison_service]
+    comparison_service: Comparison3Service = Provide[NumericalMethodContainer.comparison3_service]
 
     def post(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
         context = self.get_context_data()
@@ -48,7 +48,13 @@ class ComparisonViewInterpol(TemplateView):
                     "Spline cúbico": self.spline_cubic_service.solve(x, y),
                 }
 
-                comparison_data = self.comparison_service.create_comparison(results_dict, validations)
+                comparison_data = self.comparison_service.create_comparison(
+                    results_dict,
+                    validations,
+                    x_values=x,
+                    y_values=y
+                )
+
                 results["Interpolación"] = comparison_data
 
         except ValueError:
