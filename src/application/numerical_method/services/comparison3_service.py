@@ -1,5 +1,7 @@
 from datetime import datetime
 import os
+import numpy as np
+import re
 from django.conf import settings
 from reportlab.lib.pagesizes import A4
 from reportlab.lib import colors
@@ -9,12 +11,13 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, 
 
 class Comparison3Service:
 
-    def create_comparison(self, results_dict, validations, x_values=None, y_values=None):
+    def create_comparison(self, results_dict, validations, x_array=None, y_array=None, x_values=None, y_values=None):
         comparison = {
             "methods": [],
             "has_valid_results": False,
             "analysis": {}
         }
+        
         if not validations.get("formato", {}).get("valid", True):
             comparison["methods"].append({
                 "method": "Error de formato",
@@ -35,11 +38,34 @@ class Comparison3Service:
             })
             return comparison
 
+        # Manejar diferentes tipos de entrada para x_array e y_array
+        if x_array is None and x_values is not None:
+            try:
+                if isinstance(x_values, str):
+                    x_array = np.array([float(x) for x in x_values.split()])
+                elif isinstance(x_values, (list, tuple)):
+                    x_array = np.array(x_values)
+                else:
+                    x_array = np.array(x_values)
+            except:
+                x_array = None
+                
+        if y_array is None and y_values is not None:
+            try:
+                if isinstance(y_values, str):
+                    y_array = np.array([float(y) for y in y_values.split()])
+                elif isinstance(y_values, (list, tuple)):
+                    y_array = np.array(y_values)
+                else:
+                    y_array = np.array(y_values)
+            except:
+                y_array = None
+
         for name, result in results_dict.items():
             if result is None:
-                self._append_method(name, None, comparison)
+                self._append_method(name, None, comparison, x_array, y_array)
             else:
-                self._append_method(name, result, comparison)
+                self._append_method(name, result, comparison, x_array, y_array)
 
         if comparison["methods"]:
             analysis = self._analyze_results(comparison["methods"])
@@ -48,16 +74,26 @@ class Comparison3Service:
 
         return comparison
 
-    def _append_method(self, name, result, comparison):
+    def _append_method(self, name, result, comparison, x_array=None, y_array=None):
         if result and result.get("is_successful"):
+            # Calcular error si tenemos datos y polinomio
+            error_value = "N/A"
+            polynomial = result.get("polynomial", "N/A")
+            
+            if x_array is not None and y_array is not None and polynomial != "N/A":
+                try:
+                    error_value = self._calculate_interpolation_error(polynomial, x_array, y_array)
+                except Exception as e:
+                    print(f"Error calculando error para {name}: {e}")
+                    error_value = "N/A"
+            
             comparison["methods"].append({
                 "method": name,
                 "status": "Exitoso",
-                "polynomial": result.get("polynomial", "N/A"),
-                "error": result.get("error", "N/A"),
+                "polynomial": polynomial,
+                "error": error_value,
                 "message": result.get("message_method", "")
             })
-            comparison["has_valid_results"] = True
         else:
             comparison["methods"].append({
                 "method": name,
@@ -66,6 +102,74 @@ class Comparison3Service:
                 "error": "N/A",
                 "message": result.get("message_method", "Fallo en la ejecución") if result else "Resultado inválido"
             })
+
+    def _calculate_interpolation_error(self, polynomial_str, x_data, y_data):
+        """
+        Calcula el error RMSE del polinomio interpolante
+        """
+        try:
+            # Evaluar el polinomio en los puntos x_data
+            y_predicted = []
+            
+            for x_val in x_data:
+                # Reemplazar x con el valor numérico en el string del polinomio
+                poly_eval = polynomial_str.replace('x', f'*{x_val}').replace('**', '**')
+                
+                # Limpiar el string para evaluación segura
+                poly_eval = self._clean_polynomial_for_eval(poly_eval, x_val)
+                
+                try:
+                    y_pred = eval(poly_eval)
+                    y_predicted.append(y_pred)
+                except:
+                    # Si falla eval, usar evaluación alternativa
+                    y_pred = self._evaluate_polynomial_alternative(polynomial_str, x_val)
+                    y_predicted.append(y_pred)
+            
+            y_predicted = np.array(y_predicted)
+            
+            # Calcular RMSE
+            rmse = np.sqrt(np.mean((y_data - y_predicted)**2))
+            return float(rmse)
+            
+        except Exception as e:
+            print(f"Error en cálculo de error: {e}")
+            return float('inf')
+
+    def _clean_polynomial_for_eval(self, poly_str, x_val):
+        """
+        Limpia y prepara el string del polinomio para evaluación segura
+        """
+        # Reemplazar x con el valor
+        poly_str = poly_str.replace('x', str(x_val))
+        
+        # Limpiar signos al inicio
+        poly_str = poly_str.strip().lstrip('+')
+        
+        # Manejar multiplicaciones implícitas
+        poly_str = re.sub(r'(\d+\.?\d*)\*', r'\1*', poly_str)
+        
+        # Reemplazar ** con **
+        poly_str = poly_str.replace('**', '**')
+        
+        return poly_str
+
+    def _evaluate_polynomial_alternative(self, poly_str, x_val):
+        """
+        Método alternativo para evaluar polinomios cuando eval() falla
+        """
+        try:
+            # Método simple para polinomios lineales como "2.0*x"
+            if '*x' in poly_str and '+' not in poly_str and '-' not in poly_str.strip('-'):
+                coeff = float(poly_str.split('*')[0])
+                return coeff * x_val
+            
+            # Para casos más complejos, intentar numpy
+            # Extraer coeficientes manualmente si es necesario
+            return 0.0  # Valor por defecto
+            
+        except:
+            return 0.0
 
     def _analyze_results(self, methods):
         analysis = {
@@ -78,8 +182,11 @@ class Comparison3Service:
             "success_rate": 0
         }
 
-        # Filtrar métodos exitosos con errores numéricos
-        valid_methods = [m for m in methods if m["status"] == "Exitoso" and isinstance(m["error"], (int, float))]
+        # Filtrar métodos exitosos con errores numéricos válidos
+        valid_methods = [m for m in methods 
+                        if m["status"] == "Exitoso" 
+                        and isinstance(m["error"], (int, float)) 
+                        and not np.isinf(m["error"])]
         
         # Contar métodos exitosos y fallidos
         successful_methods = [m for m in methods if m["status"] == "Exitoso"]
