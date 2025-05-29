@@ -17,6 +17,7 @@ from .views.lagrange_view import LagrangeView
 from .views.newton_interpol_view import NewtonInterpolView
 from .views.comparison_view import ComparisonView
 from .views.comparison_view2 import ComparisonLinearView
+from .views.comparison3_view import ComparisonViewInterpol
 
 
 app_name = "numerical_method"
@@ -112,5 +113,9 @@ urlpatterns = [
         ComparisonLinearView.as_view(),
         name="comparison_linear",
     ),
-
+    path(
+        "comparison-interpol/",
+        ComparisonViewInterpol.as_view(),
+        name="comparison_interpol",
+    ),
 ]

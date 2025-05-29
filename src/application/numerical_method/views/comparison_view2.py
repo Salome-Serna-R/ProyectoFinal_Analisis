@@ -1,4 +1,3 @@
-# comparison_view2.py - Corregido y mejorado
 
 from django.views.generic import TemplateView
 from django.http import HttpRequest, HttpResponse

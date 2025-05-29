@@ -1,4 +1,3 @@
-# comparison_service.py - Colocar en: src/application/numerical_method/services/comparison_service.py
 from reportlab.lib.pagesizes import letter, A4
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle

@@ -1,0 +1,121 @@
+{% extends 'layouts/app.html' %}
+{% load static %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/components/input_guidelines_card.css' %}" />
+  <style>
+    .comparison-table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 20px 0;
+    }
+    .comparison-table th,
+    .comparison-table td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: center;
+    }
+    .comparison-table th {
+      background-color: #f8f9fa;
+      font-weight: bold;
+    }
+    .analysis-card {
+      background-color: #f8f9fa;
+      border-left: 4px solid #007bff;
+      padding: 15px;
+      margin: 20px 0;
+    }
+  </style>
+{% endblock %}
+
+{% block title %}
+  Comparación de Métodos de Interpolación
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h1 class="font-weight-bold mb-4 text-center">Comparación de Métodos de Interpolación</h1>
+
+  <div class="row">
+    <div class="col-md-6">
+      {% include 'components/input_guidelines/card_SNENL.html' %}
+    </div>
+
+    <div class="col-md-6">
+      <form method="POST" action="{% url 'numerical_method:comparison_interpol' %}">
+        {% csrf_token %}
+
+        <div class="card mb-3">
+          <div class="card-header"><strong>Entradas</strong></div>
+          <div class="card-body">
+            <div class="form-group">
+              <label for="x_values">Valores de X:</label>
+              <input type="text" class="form-control" id="x_values" name="x_values"
+                     placeholder="Ejemplo: 1 2 3 4" required
+                     value="{{ template_data.form_data.x_values|default:'' }}" />
+            </div>
+            <div class="form-group">
+              <label for="y_values">Valores de Y:</label>
+              <input type="text" class="form-control" id="y_values" name="y_values"
+                     placeholder="Ejemplo: 2 4 6 8" required
+                     value="{{ template_data.form_data.y_values|default:'' }}" />
+            </div>
+            
+            <div class="form-check mt-3">
+              <input class="form-check-input" type="checkbox" id="generate_pdf" name="generate_pdf"
+                     {% if template_data.form_data.generate_pdf %}checked{% endif %} />
+              <label class="form-check-label" for="generate_pdf">
+                Generar informe en PDF
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-lg btn-block">
+          <i class="fas fa-balance-scale"></i> Comparar Métodos
+        </button>
+      </form>
+    </div>
+  </div>
+
+  {% if template_data.comparison_data %}
+    <div class="card mt-5">
+      <div class="card-header"><h4>Resultados Comparativos</h4></div>
+      <div class="card-body">
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th>Método</th>
+              <th>Polinomio</th>
+              <th>Valor interpolado en x = {{ template_data.form_data.x_eval }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for method in template_data.comparison_data.methods %}
+              <tr>
+                <td>{{ method.method }}</td>
+                <td>{{ method.polynomial }}</td>
+                <td>{{ method.result }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+        <div class="analysis-card">
+          <h5><i class="fas fa-lightbulb"></i> Análisis</h5>
+          <p><strong>Método más exacto:</strong> {{ template_data.comparison_data.analysis.most_accurate }}</p>
+          <p><strong>Observación:</strong> {{ template_data.comparison_data.analysis.summary }}</p>
+        </div>
+
+        {% if template_data.pdf_path %}
+          <div class="text-center mt-4">
+            <a href="{% static 'reports/' %}{{ template_data.pdf_path }}" class="btn btn-success btn-lg" download>
+              <i class="fas fa-file-pdf"></i> Descargar Informe PDF
+            </a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
