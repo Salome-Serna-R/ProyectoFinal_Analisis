@@ -25,6 +25,14 @@
       padding: 15px;
       margin: 20px 0;
     }
+    .status-success {
+      color: #28a745;
+      font-weight: bold;
+    }
+    .status-error {
+      color: #dc3545;
+      font-weight: bold;
+    }
   </style>
 {% endblock %}
 
@@ -35,6 +43,17 @@
 {% block content %}
 <div class="container">
   <h1 class="font-weight-bold mb-4 text-center">Comparación de Métodos de Interpolación</h1>
+
+  <!-- Mostrar errores de validación si existen -->
+  {% if template_data.validations %}
+    {% for key, validation in template_data.validations.items %}
+      {% if not validation.valid %}
+        <div class="alert alert-danger" role="alert">
+          <strong>Error:</strong> {{ validation.message }}
+        </div>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
 
   <div class="row">
     <div class="col-md-6">
@@ -86,7 +105,9 @@
           <thead>
             <tr>
               <th>Método</th>
+              <th>Estado</th>
               <th>Polinomio</th>
+              <th>Error</th>
               <th>Mensaje</th>
             </tr>
           </thead>
@@ -94,18 +115,120 @@
             {% for method in template_data.comparison_data.Interpolación.methods %}
               <tr>
                 <td>{{ method.method }}</td>
+                <td>
+                  <span class="{% if method.status == 'Exitoso' %}status-success{% else %}status-error{% endif %}">
+                    {{ method.status }}
+                  </span>
+                </td>
                 <td>{{ method.polynomial }}</td>
+                <td>{{ method.error }}</td>
                 <td>{{ method.message }}</td>
               </tr>
             {% endfor %}
           </tbody>
         </table>
 
+        <!-- Mostrar análisis si existe -->
+        {% if template_data.comparison_data.Interpolación.analysis and template_data.comparison_data.Interpolación.has_valid_results %}
+          <div class="analysis-card">
+            <h5><i class="fas fa-chart-line"></i> Análisis Comparativo</h5>
+            
+            <!-- Estadísticas generales -->
+            <div class="row mb-3">
+              <div class="col-md-4">
+                <div class="text-center">
+                  <h6 class="text-success">Métodos Exitosos</h6>
+                  <span class="badge badge-success badge-pill" style="font-size: 1.2em;">
+                    {{ template_data.comparison_data.Interpolación.analysis.total_successful }}
+                  </span>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="text-center">
+                  <h6 class="text-danger">Métodos Fallidos</h6>
+                  <span class="badge badge-danger badge-pill" style="font-size: 1.2em;">
+                    {{ template_data.comparison_data.Interpolación.analysis.total_failed }}
+                  </span>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="text-center">
+                  <h6 class="text-info">Tasa de Éxito</h6>
+                  <span class="badge badge-info badge-pill" style="font-size: 1.2em;">
+                    {{ template_data.comparison_data.Interpolación.analysis.success_rate|floatformat:1 }}%
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Mejor y peor método -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <div class="alert alert-success" role="alert">
+                  <h6><i class="fas fa-trophy"></i> <strong>Mejor Método:</strong></h6>
+                  <p class="mb-0">{{ template_data.comparison_data.Interpolación.analysis.most_accurate }}</p>
+                </div>
+              </div>
+              {% if template_data.comparison_data.Interpolación.analysis.least_accurate %}
+              <div class="col-md-6">
+                <div class="alert alert-warning" role="alert">
+                  <h6><i class="fas fa-exclamation-triangle"></i> <strong>Menos Preciso:</strong></h6>
+                  <p class="mb-0">{{ template_data.comparison_data.Interpolación.analysis.least_accurate }}</p>
+                </div>
+              </div>
+              {% endif %}
+            </div>
+
+            <!-- Ranking de métodos -->
+            {% if template_data.comparison_data.Interpolación.analysis.ranking %}
+            <div class="mb-3">
+              <h6><i class="fas fa-list-ol"></i> <strong>Ranking de Precisión:</strong></h6>
+              <table class="table table-sm table-striped">
+                <thead class="thead-light">
+                  <tr>
+                    <th width="15%">Pos.</th>
+                    <th width="40%">Método</th>
+                    <th width="45%">Error</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for rank in template_data.comparison_data.Interpolación.analysis.ranking %}
+                  <tr>
+                    <td>
+                      {% if rank.position == 1 %}
+                        <i class="fas fa-medal text-warning"></i> {{ rank.position }}°
+                      {% else %}
+                        {{ rank.position }}°
+                      {% endif %}
+                    </td>
+                    <td>
+                      <strong>{{ rank.method }}</strong>
+                    </td>
+                    <td>
+                      <code>{{ rank.error|floatformat:"2e" }}</code>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            {% endif %}
+
+            <!-- Conclusión -->
+            <div class="alert alert-info" role="alert">
+              <h6><strong>Conclusión:</strong></h6>
+              <p class="mb-0">{{ template_data.comparison_data.Interpolación.analysis.summary }}</p>
+            </div>
+          </div>
+        {% endif %}
+
+        <!-- CORREGIDO: Enlace al PDF -->
         {% if template_data.pdf_path %}
           <div class="text-center mt-4">
             <a href="{% static 'reports/' %}{{ template_data.pdf_path }}" class="btn btn-success btn-lg" download>
               <i class="fas fa-file-pdf"></i> Descargar Informe PDF
             </a>
+            <p class="text-muted mt-2">PDF generado exitosamente</p>
           </div>
         {% endif %}
       </div>
